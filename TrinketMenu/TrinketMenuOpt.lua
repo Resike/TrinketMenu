@@ -42,32 +42,32 @@ TrinketMenu.TooltipInfo = {
 }
 
 function TrinketMenu.InitOptions()
-	TrinketMenu.CreateTimer("DragMinimapButton",TrinketMenu.DragMinimapButton,0,1)
+	TrinketMenu.CreateTimer("DragMinimapButton", TrinketMenu.DragMinimapButton, 0, 1)
 	TrinketMenu.MoveMinimapButton()
 	local item
-	for i=1,#(TrinketMenu.CheckOptInfo) do
+	for i = 1, #(TrinketMenu.CheckOptInfo) do
 		item = getglobal("TrinketMenu_Opt"..TrinketMenu.CheckOptInfo[i][1].."Text")
 		if item then
 			item:SetText(TrinketMenu.CheckOptInfo[i][3])
-			item:SetTextColor(.95,.95,.95)
+			item:SetTextColor(.95, .95, .95)
 		end
 	end
 	TrinketMenu.Tab_OnClick(1)
 	table.insert(UISpecialFrames,"TrinketMenu_OptFrame")
 	TrinketMenu_Title:SetText("TrinketMenu "..TrinketMenu_Version)
 
-	TrinketMenu_OptFrame:SetBackdropBorderColor(.3,.3,.3,1)
-	TrinketMenu_SubOptFrame:SetBackdropBorderColor(.3,.3,.3,1)
+	TrinketMenu_OptFrame:SetBackdropBorderColor(.3, .3, .3, 1)
+	TrinketMenu_SubOptFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	if TrinketMenu.QueueInit then
 		TrinketMenu.QueueInit()
 		TrinketMenu_Tab1:Show()
 		TrinketMenu_OptFrame:SetHeight(326)
-		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT",TrinketMenu_OptFrame,"TOPLEFT",8,-50)
+		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT", 8, -50)
 	else
 		TrinketMenu_OptStopOnSwap:Hide() -- remove StopOnSwap option if queue not loaded
 		TrinketMenu_Tab1:Hide() -- hide options tab if it's only tab
 		TrinketMenu_OptFrame:SetHeight(300)
-		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT",TrinketMenu_OptFrame,"TOPLEFT",8,-24)
+		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT",8, -24)
 	end
 	TrinketMenu_OptColumnsSlider:SetValue(TrinketMenuOptions.Columns)
 	TrinketMenu_OptMainScaleSlider:SetValue(TrinketMenuPerOptions.MainScale)
@@ -96,17 +96,17 @@ end
 
 function TrinketMenu.MoveMinimapButton()
 	local xpos,ypos
-	if TrinketMenuOptions.SquareMinimap=="ON" then
+	if TrinketMenuOptions.SquareMinimap == "ON" then
 		xpos = 110 * cos(TrinketMenuOptions.IconPos or 0)
 		ypos = 110 * sin(TrinketMenuOptions.IconPos or 0)
-		xpos = math.max(-82,math.min(xpos,84))
-		ypos = math.max(-86,math.min(ypos,82))
+		xpos = math.max(-82, math.min(xpos, 84))
+		ypos = math.max(-86, math.min(ypos, 82))
 	else
-		xpos = 80*cos(TrinketMenuOptions.IconPos or 0)
-		ypos = 80*sin(TrinketMenuOptions.IconPos or 0)
+		xpos = 80 * cos(TrinketMenuOptions.IconPos or 0)
+		ypos = 80 * sin(TrinketMenuOptions.IconPos or 0)
 	end
-	TrinketMenu_IconFrame:SetPoint("TOPLEFT","Minimap","TOPLEFT",52-xpos,ypos-52)
-	if TrinketMenuOptions.ShowIcon=="ON" then
+	TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 52-xpos, ypos-52)
+	if TrinketMenuOptions.ShowIcon == "ON" then
 		TrinketMenu_IconFrame:Show()
 	else
 		TrinketMenu_IconFrame:Hide()
@@ -116,27 +116,27 @@ end
 function TrinketMenu.DragMinimapButton()
 	local xpos,ypos = GetCursorPosition()
 	local xmin,ymin = Minimap:GetLeft() or 400, Minimap:GetBottom() or 400
-	xpos = xmin-xpos/Minimap:GetEffectiveScale()+70
-	ypos = ypos/Minimap:GetEffectiveScale()-ymin-70
-	TrinketMenuOptions.IconPos = math.deg(math.atan2(ypos,xpos))
+	xpos = xmin - xpos / Minimap:GetEffectiveScale() + 70
+	ypos = ypos / Minimap:GetEffectiveScale() - ymin - 70
+	TrinketMenuOptions.IconPos = math.deg(math.atan2(ypos, xpos))
 	TrinketMenu.MoveMinimapButton()
 end
 
 function TrinketMenu.MinimapButton_OnClick()
 	PlaySound("GAMEGENERICBUTTONPRESS")
 	if IsShiftKeyDown() then
-		TrinketMenuOptions.Locked = TrinketMenuOptions.Locked=="ON" and "OFF" or "ON"
+		TrinketMenuOptions.Locked = TrinketMenuOptions.Locked == "ON" and "OFF" or "ON"
 		TrinketMenu.ReflectLock()
 	elseif IsAltKeyDown() and TrinketMenu.QueueInit then
-		if arg1=="LeftButton" then
+		if arg1 == "LeftButton" then
 			TrinketMenuQueue.Enabled[0] = not TrinketMenuQueue.Enabled[0] and 1 or nil
-		elseif arg1=="RightButton" then
+		elseif arg1 == "RightButton" then
 			TrinketMenuQueue.Enabled[1] = not TrinketMenuQueue.Enabled[1] and 1 or nil
 		end
 		TrinketMenu.ReflectQueueEnabled()
 		TrinketMenu.UpdateCombatQueue()
 	else
-		if arg1=="LeftButton" and TrinketMenuOptions.DisableToggle=="OFF" then
+		if arg1 == "LeftButton" and TrinketMenuOptions.DisableToggle == "OFF" then
 			TrinketMenu.ToggleFrame(TrinketMenu_MainFrame)
 		else
 			TrinketMenu.ToggleFrame(TrinketMenu_OptFrame)
@@ -148,24 +148,24 @@ end
 
 function TrinketMenu.ValidateChecks()
 	local check,button
-	for i=1,#(TrinketMenu.CheckOptInfo) do
+	for i = 1, #(TrinketMenu.CheckOptInfo) do
 		check = TrinketMenu.CheckOptInfo[i]
 		button = getglobal("TrinketMenu_Opt"..check[1])
 		if button then
-			button:SetChecked(TrinketMenuOptions[check[1]]=="ON")
+			button:SetChecked(TrinketMenuOptions[check[1]] == "ON")
 			if check[5] then
-				if TrinketMenuOptions[check[5]]=="ON" then
+				if TrinketMenuOptions[check[5]] == "ON" then
 					button:Enable()
-					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.95,.95,.95)
+					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.95, .95, .95)
 				else
 					button:Disable()
-					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.5,.5,.5)
+					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.5, .5, .5)
 				end
 			end
 		end
 	end
-	TrinketMenu_OptColumnsSlider:SetAlpha((TrinketMenuOptions.SetColumns=="ON") and 1 or .5)
-	TrinketMenu_OptColumnsSlider:EnableMouse((TrinketMenuOptions.SetColumns=="ON") and 1 or 0)
+	TrinketMenu_OptColumnsSlider:SetAlpha((TrinketMenuOptions.SetColumns == "ON") and 1 or .5)
+	TrinketMenu_OptColumnsSlider:EnableMouse((TrinketMenuOptions.SetColumns == "ON") and 1 or 0)
 	TrinketMenu_OptColumnsSlider:SetValue(TrinketMenuOptions.Columns)
 end
 
@@ -182,7 +182,7 @@ end
 function TrinketMenu.OptMainScaleSlider_OnValueChanged(self)
 	if TrinketMenuPerOptions then
 		TrinketMenuPerOptions.MainScale = self:GetValue()
-		TrinketMenu_OptMainScaleSliderText:SetText(format("Main Scale: %.2f",TrinketMenuPerOptions.MainScale))
+		TrinketMenu_OptMainScaleSliderText:SetText(format("Main Scale: %.2f", TrinketMenuPerOptions.MainScale))
 		TrinketMenu_MainFrame:SetScale(TrinketMenuPerOptions.MainScale)
 	end
 end
@@ -190,98 +190,97 @@ end
 function TrinketMenu.OptMenuScaleSlider_OnValueChanged(self)
 	if TrinketMenuPerOptions then
 		TrinketMenuPerOptions.MenuScale = self:GetValue()
-		TrinketMenu_OptMenuScaleSliderText:SetText(format("Menu Scale: %.2f",TrinketMenuPerOptions.MenuScale))
+		TrinketMenu_OptMenuScaleSliderText:SetText(format("Menu Scale: %.2f", TrinketMenuPerOptions.MenuScale))
 		TrinketMenu_MenuFrame:SetScale(TrinketMenuPerOptions.MenuScale)
 	end
 end
 
 function TrinketMenu.CheckButton_OnClick(self)
-	local _,_,var = string.find(self:GetName(),"TrinketMenu_Opt(.+)")
+	local _, _, var = string.find(self:GetName(),"TrinketMenu_Opt(.+)")
 	if TrinketMenuOptions[var] then
 		TrinketMenuOptions[var] = self:GetChecked() and "ON" or "OFF"
 		PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		TrinketMenu.ValidateChecks()
 	end
 
-	if self==TrinketMenu_OptCooldownCount then
+	if self == TrinketMenu_OptCooldownCount then
 		TrinketMenu.WriteWornCooldowns()
 		TrinketMenu.WriteMenuCooldowns()
-	elseif self==TrinketMenu_OptLocked then
+	elseif self == TrinketMenu_OptLocked then
 		TrinketMenu.DockWindows()
 		TrinketMenu.ReflectLock()
-	elseif self==TrinketMenu_OptKeepOpen or self==TrinketMenu_OptSetColumns then
-		if TrinketMenuOptions.KeepOpen=="ON" then
+	elseif self == TrinketMenu_OptKeepOpen or self == TrinketMenu_OptSetColumns then
+		if TrinketMenuOptions.KeepOpen == "ON" then
 			TrinketMenu.BuildMenu()
 		end
-	elseif self==TrinketMenu_OptKeepDocked then
+	elseif self == TrinketMenu_OptKeepDocked then
 		TrinketMenu.DockWindows()
-	elseif self==TrinketMenu_OptLargeCooldown then
+	elseif self == TrinketMenu_OptLargeCooldown then
 		TrinketMenu.ReflectCooldownFont()
-	elseif self==TrinketMenu_OptSquareMinimap then
+	elseif self == TrinketMenu_OptSquareMinimap then
 		TrinketMenu.MoveMinimapButton()
-	elseif self==TrinketMenu_OptShowHotKeys then
+	elseif self == TrinketMenu_OptShowHotKeys then
 		TrinketMenu.KeyBindingsChanged()
-	elseif self==TrinketMenu_OptShowIcon then
+	elseif self == TrinketMenu_OptShowIcon then
 		TrinketMenu.MoveMinimapButton()
-	elseif self==TrinketMenu_OptRedRange then
+	elseif self == TrinketMenu_OptRedRange then
 		TrinketMenu.ReflectRedRange()
-	elseif self==TrinketMenu_OptMenuOnRight then
+	elseif self == TrinketMenu_OptMenuOnRight then
 		TrinketMenu.ReflectMenuOnRight()
 	end
 end
 
 function TrinketMenu.ReflectLock()
-	local c = TrinketMenuOptions.Locked=="ON" and 0 or .5
-	TrinketMenu_OptFrame:SetBackdropBorderColor(c,c,c,1)
-	TrinketMenu_MainFrame:SetBackdropColor(c,c,c,c)
-	TrinketMenu_MainFrame:SetBackdropBorderColor(c,c,c,c*2)
-	TrinketMenu_MenuFrame:SetBackdropColor(c,c,c,c)
-	TrinketMenu_MenuFrame:SetBackdropBorderColor(c,c,c,c*2)
-	TrinketMenu_MenuFrame:EnableMouse(c*2)
-	TrinketMenu_OptLocked:SetChecked(1-c*2)
+	local c = TrinketMenuOptions.Locked == "ON" and 0 or .5
+	TrinketMenu_OptFrame:SetBackdropBorderColor(c, c, c, 1)
+	TrinketMenu_MainFrame:SetBackdropColor(c, c, c, c)
+	TrinketMenu_MainFrame:SetBackdropBorderColor(c, c, c, c * 2)
+	TrinketMenu_MenuFrame:SetBackdropColor(c, c, c, c)
+	TrinketMenu_MenuFrame:SetBackdropBorderColor(c, c, c, c * 2)
+	TrinketMenu_MenuFrame:EnableMouse(c * 2)
+	TrinketMenu_OptLocked:SetChecked(1 - c * 2)
 	local normalTexture = TrinketMenu_LockButton:GetNormalTexture()
 	local pushedTexture = TrinketMenu_LockButton:GetPushedTexture()
-	if c==0 then
-		normalTexture:SetTexCoord(.875,1,.125,.25)
-		pushedTexture:SetTexCoord(.75,.875,.125,.25)
+	if c == 0 then
+		normalTexture:SetTexCoord(.875, 1, .125, .25)
+		pushedTexture:SetTexCoord(.75, .875, .125, .25)
 	else
-		normalTexture:SetTexCoord(.75,.875,.125,.25)
-		pushedTexture:SetTexCoord(.875,1,.125,.25)
+		normalTexture:SetTexCoord(.75, .875, .125, .25)
+		pushedTexture:SetTexCoord(.875, 1, .125, .25)
 	end
 end
 
 function TrinketMenu.ReflectCooldownFont()
 	TrinketMenu.SetCooldownFont("TrinketMenu_Trinket0")
 	TrinketMenu.SetCooldownFont("TrinketMenu_Trinket1")
-	for i=1,30 do
+	for i = 1, 30 do
 		TrinketMenu.SetCooldownFont("TrinketMenu_Menu"..i)
 	end
 end
 
 function TrinketMenu.SetCooldownFont(button)
 	local item = getglobal(button.."Time")
-	if TrinketMenuOptions.LargeCooldown=="ON" then
-		item:SetFont("Fonts\\FRIZQT__.TTF",16,"OUTLINE")
-		item:SetTextColor(1,.82,0,1)
+	if TrinketMenuOptions.LargeCooldown == "ON" then
+		item:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
+		item:SetTextColor(1, .82, 0, 1)
 		item:ClearAllPoints()
-		item:SetPoint("CENTER",button,"CENTER")
+		item:SetPoint("CENTER", button, "CENTER")
 	else
-		item:SetFont("Fonts\\ARIALN.TTF",14,"OUTLINE")
-		item:SetTextColor(1,1,1,1)
+		item:SetFont("Fonts\\ARIALN.TTF", 14, "OUTLINE")
+		item:SetTextColor(1, 1, 1, 1)
 		item:ClearAllPoints()
-		item:SetPoint("BOTTOM",button,"BOTTOM")
+		item:SetPoint("BOTTOM", button, "BOTTOM")
 	end
 end
-
 
 --[[ Titlebar buttons ]]
 
 function TrinketMenu.SmallButton_OnClick(self)
 	PlaySound("igMainMenuOptionCheckBoxOn")
-	if self==TrinketMenu_CloseButton then
+	if self == TrinketMenu_CloseButton then
 		TrinketMenu_OptFrame:Hide()
-	elseif self==TrinketMenu_LockButton then
-		TrinketMenuOptions.Locked = (TrinketMenuOptions.Locked=="ON") and "OFF" or "ON"
+	elseif self == TrinketMenu_LockButton then
+		TrinketMenuOptions.Locked = (TrinketMenuOptions.Locked == "ON") and "OFF" or "ON"
 		TrinketMenu.DockWindows()
 		TrinketMenu.ReflectLock()
 	end
@@ -295,14 +294,14 @@ function TrinketMenu.Tab_OnClick(id)
 	if TrinketMenu_ProfilesFrame then
 		TrinketMenu_ProfilesFrame:Hide()
 	end
-	for i=1,3 do
+	for i = 1, 3 do
 		tab = getglobal("TrinketMenu_Tab"..i)
 		if tab then
 			tab:UnlockHighlight()
 		end
 	end
 	getglobal("TrinketMenu_Tab"..id):LockHighlight()
-	if id==1 then
+	if id == 1 then
 		TrinketMenu_SubOptFrame:Show()
 		if TrinketMenu_SubQueueFrame then
 			TrinketMenu_SubQueueFrame:Hide()
@@ -310,6 +309,6 @@ function TrinketMenu.Tab_OnClick(id)
 	else
 		TrinketMenu_SubOptFrame:Hide()
 		TrinketMenu_SubQueueFrame:Show()
-		TrinketMenu.OpenSort(3-id)
+		TrinketMenu.OpenSort(3 - id)
 	end
 end

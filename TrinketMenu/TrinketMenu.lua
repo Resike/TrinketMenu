@@ -1032,7 +1032,7 @@ function TrinketMenu.UpdateCombatQueue()
 				icon:Show()
 			end
 		elseif TrinketMenu.QueueInit and TrinketMenuQueue and TrinketMenuQueue.Enabled[which] then
-			icon:SetTexture("Interface\\AddOns\\TrinketMenu\\TrinketMenu-Gear")
+			icon:SetTexture("Interface\\AddOns\\TrinketMenu\\Textures\\TrinketMenu-Gear")
 			icon:Show()
 		end
 	end

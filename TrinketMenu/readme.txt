@@ -270,4 +270,3 @@ __ Changes __
 2.0 8/14/05 - rewritten from scratch, added up to 30+2 trinkets, menu grows outward, cooldown numbers, keep menu open option, minimap icon and scaling, far better handling of bag/inventory updates, cooldown models won't update if they're off the screen
 1.1 7/20/05 - only react to BAG_UPDATE every second (by Thelgar), made lock/unlock more visually apparent and moved menu closer to main window
 1.0 4/8/05 - initial release
-
