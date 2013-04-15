@@ -1,6 +1,6 @@
 <Bindings>
 	<Binding name="Toggle TrinketMenu" header="TRINKETMENU">
-		TrinketMenu.ToggleFrame(TrinketMenuOptions.DisableToggle=="ON" and TrinketMenu_OptFrame or TrinketMenu_MainFrame)
+		TrinketMenu.ToggleFrame(TrinketMenuOptions.DisableToggle == "ON" and TrinketMenu_OptFrame or TrinketMenu_MainFrame)
 	</Binding>
 	<Binding name="CLICK TrinketMenu_Trinket0:LeftButton">
 		-- top trinket

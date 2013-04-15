@@ -1,5 +1,4 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/">
-
 	<!-- Worn trinkets template -->
 	<CheckButton name="TrinketMenuMainTrinketTemplate" inherits="ActionButtonTemplate,SecureActionButtonTemplate" virtual="true">
 		<Scripts>

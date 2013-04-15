@@ -53,7 +53,7 @@ function TrinketMenu.InitOptions()
 		end
 	end
 	TrinketMenu.Tab_OnClick(1)
-	table.insert(UISpecialFrames,"TrinketMenu_OptFrame")
+	table.insert(UISpecialFrames, "TrinketMenu_OptFrame")
 	TrinketMenu_Title:SetText("TrinketMenu "..TrinketMenu_Version)
 
 	TrinketMenu_OptFrame:SetBackdropBorderColor(.3, .3, .3, 1)
@@ -62,12 +62,12 @@ function TrinketMenu.InitOptions()
 		TrinketMenu.QueueInit()
 		TrinketMenu_Tab1:Show()
 		TrinketMenu_OptFrame:SetHeight(326)
-		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT", 8, -50)
+		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT", 8, - 50)
 	else
 		TrinketMenu_OptStopOnSwap:Hide() -- remove StopOnSwap option if queue not loaded
 		TrinketMenu_Tab1:Hide() -- hide options tab if it's only tab
 		TrinketMenu_OptFrame:SetHeight(300)
-		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT",8, -24)
+		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT",8, - 24)
 	end
 	TrinketMenu_OptColumnsSlider:SetValue(TrinketMenuOptions.Columns)
 	TrinketMenu_OptMainScaleSlider:SetValue(TrinketMenuPerOptions.MainScale)
@@ -99,13 +99,13 @@ function TrinketMenu.MoveMinimapButton()
 	if TrinketMenuOptions.SquareMinimap == "ON" then
 		xpos = 110 * cos(TrinketMenuOptions.IconPos or 0)
 		ypos = 110 * sin(TrinketMenuOptions.IconPos or 0)
-		xpos = math.max(-82, math.min(xpos, 84))
-		ypos = math.max(-86, math.min(ypos, 82))
+		xpos = math.max(- 82, math.min(xpos, 84))
+		ypos = math.max(- 86, math.min(ypos, 82))
 	else
 		xpos = 80 * cos(TrinketMenuOptions.IconPos or 0)
 		ypos = 80 * sin(TrinketMenuOptions.IconPos or 0)
 	end
-	TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 52-xpos, ypos-52)
+	TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 52 - xpos, ypos - 52)
 	if TrinketMenuOptions.ShowIcon == "ON" then
 		TrinketMenu_IconFrame:Show()
 	else
@@ -196,7 +196,7 @@ function TrinketMenu.OptMenuScaleSlider_OnValueChanged(self)
 end
 
 function TrinketMenu.CheckButton_OnClick(self)
-	local _, _, var = string.find(self:GetName(),"TrinketMenu_Opt(.+)")
+	local _, _, var = string.find(self:GetName(), "TrinketMenu_Opt(.+)")
 	if TrinketMenuOptions[var] then
 		TrinketMenuOptions[var] = self:GetChecked() and "ON" or "OFF"
 		PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")

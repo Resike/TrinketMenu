@@ -10,14 +10,14 @@ function TrinketMenu.QueueInit()
 	}
 	TrinketMenuQueue.Sort[0] = TrinketMenuQueue.Sort[0] or {}
 	TrinketMenuQueue.Sort[1] = TrinketMenuQueue.Sort[1] or {}
-	TrinketMenu_SubQueueFrame:SetBackdropBorderColor(.3,.3,.3,1)
-	TrinketMenu_ProfilesFrame:SetBackdropBorderColor(.3,.3,.3,1)
-	TrinketMenu_ProfilesListFrame:SetBackdropBorderColor(.3,.3,.3,1)
+	TrinketMenu_SubQueueFrame:SetBackdropBorderColor(.3, .3, .3,1)
+	TrinketMenu_ProfilesFrame:SetBackdropBorderColor(.3, .3, .3, 1)
+	TrinketMenu_ProfilesListFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	TrinketMenu_SortPriorityText:SetText("Priority")
-	TrinketMenu_SortPriorityText:SetTextColor(.95,.95,.95)
+	TrinketMenu_SortPriorityText:SetTextColor(.95, .95, .95)
 	TrinketMenu_SortKeepEquippedText:SetText("Pause Queue")
-	TrinketMenu_SortKeepEquippedText:SetTextColor(.95,.95,.95)
-	TrinketMenu_SortListFrame:SetBackdropBorderColor(.3,.3,.3,1)
+	TrinketMenu_SortKeepEquippedText:SetTextColor(.95, .95, .95)
+	TrinketMenu_SortListFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	TrinketMenu.ReflectQueueEnabled()
 	TrinketMenu.UpdateCombatQueue()
 
@@ -45,16 +45,16 @@ end
 function TrinketMenu.GetID(bag, slot)
 	local _, id
 	if slot then
-		_, _, id = string.find(GetContainerItemLink(bag,slot) or "","item:(%d+)")
+		_, _, id = string.find(GetContainerItemLink(bag, slot) or "", "item:(%d+)")
 	else
-		_, _, id = string.find(GetInventoryItemLink("player",bag) or "","item:(%d+)")
+		_, _, id = string.find(GetInventoryItemLink("player", bag) or "", "item:(%d+)")
 	end
 	return id
 end
 
 function TrinketMenu.GetNameByID(id)
 	if id == 0 then
-		return "-- stop queue here --","Interface\\Buttons\\UI-GroupLoot-Pass-Up",1
+		return "-- stop queue here --", "Interface\\Buttons\\UI-GroupLoot-Pass-Up", 1
 	else
 		local name, _, quality, _, _ ,_, _, _, _, texture = GetItemInfo(id or "")
 		return name, texture, quality
@@ -97,9 +97,9 @@ function TrinketMenu.SortScrollFrameUpdate()
 	FauxScrollFrame_Update(TrinketMenu_SortScroll, list and #(list) or 0, 9, 24)
 
 	if list and list[1] then
-		local r,g,b,found
-		local texture,name,quality
-		local item,itemName,itemIcon
+		local r, g, b, found
+		local texture, name, quality
+		local item, itemName, itemIcon
 		for i = 1, 9 do
 			item = getglobal("TrinketMenu_Sort"..i)
 			itemName = getglobal("TrinketMenu_Sort"..i.."Name")
@@ -111,7 +111,7 @@ function TrinketMenu.SortScrollFrameUpdate()
 				itemName:SetText(name)
 				if quality then -- GetItemInfo may not be valid early on after patches
 					r,g,b = GetItemQualityColor(quality)
-					itemName:SetTextColor(r,g,b)
+					itemName:SetTextColor(r, g, b)
 					itemIcon:SetVertexColor(1, 1, 1)
 				end
 				item:Show()
@@ -158,7 +158,7 @@ function TrinketMenu.SortTooltip(self)
 		GameTooltip:SetHyperlink(itemLink)
 		GameTooltip:Show()
 	else
-		TrinketMenu.OnTooltip(self,"Stop Queue Here","Move this to mark the lowest trinket to auto queue.  Sometimes you may want a passive trinket with a click effect to be the end (Burst of Knowledge, Second Wind, etc).")
+		TrinketMenu.OnTooltip(self,"Stop Queue Here", "Move this to mark the lowest trinket to auto queue.  Sometimes you may want a passive trinket with a click effect to be the end (Burst of Knowledge, Second Wind, etc).")
 	end
 end
 
@@ -251,7 +251,7 @@ function TrinketMenu.SortMove(self)
 		TrinketMenu.SortSelected = 0
 		TrinketMenu.ShowProfiles(TrinketMenu_SortListFrame:IsVisible())
 	elseif self == TrinketMenu_Delete then
-		table.remove(list,idx1)
+		table.remove(list, idx1)
 		TrinketMenu.SortSelected = 0
 	end
 	TrinketMenu.SortValidate()
@@ -261,21 +261,21 @@ end
 function TrinketMenu.SortDelay_OnTextChanged()
 	local delay = tonumber(TrinketMenu_SortDelay:GetText()) or 0
 	local id = TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][TrinketMenu.SortSelected]
-	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or {}
+	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or { }
 	TrinketMenuQueue.Stats[id].delay = delay ~= 0 and delay or nil
 end
 
 function TrinketMenu.SortPriority_OnClick(self)
 	local check = self:GetChecked()
 	local id = TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][TrinketMenu.SortSelected]
-	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or {}
+	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or { }
 	TrinketMenuQueue.Stats[id].priority = check
 end
 
 function TrinketMenu.SortKeepEquipped_OnClick(self)
 	local check = self:GetChecked()
 	local id = TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][TrinketMenu.SortSelected]
-	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or {}
+	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or { }
 	TrinketMenuQueue.Stats[id].keep = check
 end
 
@@ -288,7 +288,7 @@ end
 
 function TrinketMenu.TrinketNearReady(id)
 	local start,duration = GetItemCooldown(id)
-	if start == 0 or duration-(GetTime()-start) <= 30 then
+	if start == 0 or duration - (GetTime() - start) <= 30 then
 		return 1
 	end
 end
@@ -310,7 +310,7 @@ end
 -- which = 0 or 1, decides if a trinket should be equipped and equips if so
 function TrinketMenu.ProcessAutoQueue(which)
 	local start, duration, enable = GetInventoryItemCooldown("player", 13 + which)
-	local timeLeft = GetTime()-start
+	local timeLeft = GetTime() - start
 	local _, _, id, name = string.find(GetInventoryItemLink("player", 13 + which) or "", "item:(%d+).+%[(.+)%]")
 	local icon = getglobal("TrinketMenu_Trinket"..which.."Queue") 
 
@@ -336,7 +336,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 
 	if TrinketMenuQueue.Stats[id] then
 		if TrinketMenuQueue.Stats[id].keep then
-			icon:SetVertexColor(1,.5,.5)
+			icon:SetVertexColor(1, .5, .5)
 			return -- leave if .keep flag set on this item
 		end
 		if TrinketMenuQueue.Stats[id].delay then
@@ -357,7 +357,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 		TrinketMenu.CombatQueue[which] = nil
 		TrinketMenu.UpdateCombatQueue()
 	end
-	local list,rank = TrinketMenuQueue.Sort[which]
+	local list, rank = TrinketMenuQueue.Sort[which]
 	for i = 1, #(list) do
 		if list[i] == 0 then
 			rank = i
@@ -370,7 +370,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 	end
 	if rank then
 		local _, bag, slot
-		for i = 1,rank do
+		for i = 1, rank do
 			if not ready or enable == 0 or (TrinketMenuQueue.Stats[list[i]] and TrinketMenuQueue.Stats[list[i]].priority) then
 				if TrinketMenu.TrinketNearReady(list[i]) then
 					if GetItemCount(list[i]) > 0 and not IsEquippedItem(list[i]) then
@@ -395,11 +395,11 @@ end
 
 -- TrinketMenu.SetQueue(0 or 1,"ON" or "OFF" or "PAUSE" or "RESUME" or "SORT"[,"sort list")
 -- some examples:
--- TrinketMenu.SetQueue(1,"PAUSE") -- if queue is going, pause it
--- TrinketMenu.SetQueue(1,"RESUME") -- if queue is paused, resume it
--- TrinketMenu.SetQueue(1,"SORT","Earthstrike","Insignia of the Alliance","Diamond Flask") -- set sort
--- TrinketMenu.SetQueue(0,"SORT","Lifestone","Darkmoon Card: Heroism") -- set sort for trinket 0
--- TrinketMenu.SetQueue(1,"SORT","Pvp Profile") -- note you can replace list with a profile name
+-- TrinketMenu.SetQueue(1, "PAUSE") -- if queue is going, pause it
+-- TrinketMenu.SetQueue(1, "RESUME") -- if queue is paused, resume it
+-- TrinketMenu.SetQueue(1, "SORT","Earthstrike","Insignia of the Alliance","Diamond Flask") -- set sort
+-- TrinketMenu.SetQueue(0, "SORT","Lifestone","Darkmoon Card: Heroism") -- set sort for trinket 0
+-- TrinketMenu.SetQueue(1, "SORT","Pvp Profile") -- note you can replace list with a profile name
 -- (a "stop the queue" is assumed at the end of the list)
 function TrinketMenu.SetQueue(which, ...)
 	local errorstub = "|cFFBBBBBBTrinketMenu:|cFFFFFFFF "
@@ -407,14 +407,14 @@ function TrinketMenu.SetQueue(which, ...)
 		DEFAULT_CHAT_FRAME:AddMessage(errorstub.."First parameter must be 0 for top trinket or 1 for bottom.")
 		return
 	end
-	if select("#",...) < 1 then
+	if (select("#", ...)) < 1 then
 		DEFAULT_CHAT_FRAME:AddMessage(errorstub.."Second parameter is either ON, OFF, PAUSE, RESUME or the beginning of a list of trinkets in a sort order.")
 		return
 	end
 	if TrinketMenu_OptFrame:IsVisible() then
 		TrinketMenu_OptFrame:Hide() -- close option frame if it's up. the mess otherwise would be scary
 	end
-	local cmd = select(1,...)
+	local cmd = (select(1, ...))
 	if cmd == "ON" then
 		TrinketMenuQueue.Enabled[which] = 1
 		TrinketMenu.PausedQueue[which] = nil
@@ -425,26 +425,26 @@ function TrinketMenu.SetQueue(which, ...)
 		TrinketMenu.PausedQueue[which] = 1
 	elseif cmd == "RESUME" then
 		TrinketMenu.PausedQueue[which] = nil
-	elseif cmd == "SORT" and select("#",...) > 1 then
+	elseif cmd == "SORT" and (select("#",...)) > 1 then
 		local sortidx, inv, bag, slot, id = 1
 		for i in pairs(TrinketMenuQueue.Sort[which]) do
 			TrinketMenuQueue.Sort[which][i] = nil
 		end
 --		table.setn(TrinketMenuQueue.Sort[which],0)
-		local profile = TrinketMenu.GetProfileID(select(2,...))
+		local profile = TrinketMenu.GetProfileID((select(2,...)))
 		if profile then
 			for i = 2, #(TrinketMenuQueue.Profiles[profile]) do
 				table.insert(TrinketMenuQueue.Sort[which], TrinketMenuQueue.Profiles[profile][i])
 			end
 		else
-			for i = 2, select("#", ...) do
-				inv,bag,slot = TrinketMenu.FindItem(select(i,...),1) -- include inventory
+			for i = 2, (select("#", ...)) do
+				inv, bag, slot = TrinketMenu.FindItem((select(i, ...)), 1) -- include inventory
 				if inv then
 					table.insert(TrinketMenuQueue.Sort[which], TrinketMenu.GetID(inv))
 				elseif bag then
 					table.insert(TrinketMenuQueue.Sort[which], TrinketMenu.GetID(bag, slot))
 				else
-					DEFAULT_CHAT_FRAME:AddMessage(errorstub.."Trinket or profile \""..select(i,...).."\" not found.")
+					DEFAULT_CHAT_FRAME:AddMessage(errorstub.."Trinket or profile \""..(select(i, ...)).."\" not found.")
 				end
 			end
 			table.insert(TrinketMenuQueue.Sort[which], 0)
@@ -610,14 +610,14 @@ function TrinketMenu.ProfilesButton_OnClick(self)
 		local list = TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting]
 		local save = TrinketMenuQueue.Profiles[1]
 		for i = 1, #(list) do
-			table.insert(save,list[i])
+			table.insert(save, list[i])
 			if list[i] == 0 then
 				break
 			end
 		end
 		TrinketMenu_ProfilesFrame:Hide()
 	elseif self == TrinketMenu_ProfilesLoad then
-		TrinketMenu.LoadProfile(TrinketMenu.CurrentlySorting,idx)
+		TrinketMenu.LoadProfile(TrinketMenu.CurrentlySorting, idx)
 	elseif self == TrinketMenu_ProfilesCancel then
 		TrinketMenu_ProfilesFrame:Hide()
 	end
@@ -627,7 +627,7 @@ function TrinketMenu.ProfileList_OnDoubleClick(self)
 	if #(TrinketMenuQueue.Profiles) > 0 then
 		local idx = self:GetID() + FauxScrollFrame_GetOffset(TrinketMenu_ProfileScroll)
 		if TrinketMenuQueue.Profiles[idx] then
-			TrinketMenu.LoadProfile(TrinketMenu.CurrentlySorting,idx)
+			TrinketMenu.LoadProfile(TrinketMenu.CurrentlySorting, idx)
 		end
 	end
 end

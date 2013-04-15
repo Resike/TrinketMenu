@@ -1,5 +1,4 @@
 <Ui>
-
 	<Button name="TrinketMenu_ProfilesListTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="174" y="20"/>
@@ -862,5 +861,4 @@
 			</Frame>
 		</Frames>
 	</Frame>
-
 </Ui>

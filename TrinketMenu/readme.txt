@@ -1,12 +1,13 @@
-TrinketMenu 3.8
+TrinketMenu 5.0.0
 
 This is a mod to make swapping trinkets easier.  It will display your two equipped trinkets in a bar.  Mouseover on either trinket will display a menu of up to 30 trinkets in your bags to swap.
 
-__ New in 3.81 __
-- Scaling now done via sliders in options
-- Updated for 3.0 client
-- Removed obsolete buff cache system
-- Auto swaps while casting wait until done casting
+__ New in 5.0.0 __
+- Updated for 5.2.
+- Minor fixes.
+- Code Cleanup.
+- Moved textures to "Textures" folder.
+- Added notification support for MSBT, Parrot, xCT, xCT+.
 
 __ Swapping/Using trinkets __
 
@@ -234,6 +235,8 @@ Q: I can't rotate, move or do anything with the windows.
 A: That sounds like the windows are locked.  Enter: /trinket unlock
 
 __ Changes __
+
+5.0.0 2013.04.15. Updated for 5.2, code cleanups.
 3.81, 10/8/08, passed self to SortPriority_OnClick
 3.8, 10/8/08, wotlk beta: scaling done via sliders, removed resize grips, this->self conversion should be complete, removed buff cache, queue won't process while casting
 3.71, 5/7/08, removed ITEM_SPELL_CHARGES_P1 from tiny tooltip, no longer exists
