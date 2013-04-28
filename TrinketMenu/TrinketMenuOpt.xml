@@ -546,10 +546,10 @@
 							</Size>
 						</ThumbTexture>
 					</Slider>
-
 				</Frames>
 			</Frame>
 		</Frames>
+
 		<Scripts>
 			<OnMouseDown>
 				self:StartMoving()

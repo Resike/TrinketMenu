@@ -1,6 +1,6 @@
 --[[ TrinketMenu 5.0.0 ]]--
 
-TrinketMenu = {}
+TrinketMenu = { }
 
 -- localized strings required to support engineering bags
 TrinketMenu.BAG = "Bag" -- 7th return of GetItemInfo on a normal bag
@@ -153,7 +153,7 @@ function TrinketMenu.BuildMenu()
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = GetItemInfo(itemID or "")
 				if equipSlot == "INVTYPE_TRINKET" and (IsAltKeyDown() or not TrinketMenuPerOptions.Hidden[itemID]) then
 					if not TrinketMenu.BaggedTrinkets[idx] then
-						TrinketMenu.BaggedTrinkets[idx] = {}
+						TrinketMenu.BaggedTrinkets[idx] = { }
 					end
 					TrinketMenu.BaggedTrinkets[idx].id = itemID
 					TrinketMenu.BaggedTrinkets[idx].bag = i
@@ -258,12 +258,12 @@ function TrinketMenu.Initialize()
 	options.Columns = options.Columns or 4 -- 3.0
 	options.LargeCooldown = options.LargeCooldown or "OFF" -- 3.0
 	options.ShowHotKeys = options.ShowHotKeys or "OFF" -- 3.0
-	TrinketMenuPerOptions.ItemsUsed = TrinketMenuPerOptions.ItemsUsed or {} -- 3.0
+	TrinketMenuPerOptions.ItemsUsed = TrinketMenuPerOptions.ItemsUsed or { } -- 3.0
 	options.StopOnSwap = options.StopOnSwap or "OFF" -- 3.2
 	options.HideOnLoad = options.HideOnLoad or "OFF" -- 3.4
 	options.RedRange = options.RedRange or "OFF" -- 3.54
 	TrinketMenuPerOptions.Alpha = TrinketMenuPerOptions.Alpha or 1 -- 3.5
-	TrinketMenuPerOptions.Hidden = TrinketMenuPerOptions.Hidden or {}
+	TrinketMenuPerOptions.Hidden = TrinketMenuPerOptions.Hidden or { }
 	options.MenuOnRight = options.MenuOnRight or "OFF" -- 3.61
 
 	if TrinketMenuPerOptions.XPos and TrinketMenuPerOptions.YPos then
@@ -544,8 +544,8 @@ end
 --[[ Timers ]]
 
 function TrinketMenu.InitTimers()
-	TrinketMenu.TimerPool = {}
-	TrinketMenu.Timers = {}
+	TrinketMenu.TimerPool = { }
+	TrinketMenu.Timers = { }
 end
 
 function TrinketMenu.CreateTimer(name, func, delay, rep)
@@ -698,7 +698,6 @@ function TrinketMenu.MenuFrame_OnMouseUp()
 end
 
 function TrinketMenu.DockingMenu()
-
 	local main = TrinketMenu_MainFrame
 	local menu = TrinketMenu_MenuFrame
 	local mainscale = TrinketMenu_MainFrame:GetScale()
@@ -1196,4 +1195,3 @@ function TrinketMenu.RedRangeUpdate()
 		end
 	end
 end
-

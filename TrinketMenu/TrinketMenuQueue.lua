@@ -1,12 +1,12 @@
 --[[ TrinketMenuQueue : auto queue system ]]
 
-TrinketMenu.PausedQueue = {} -- 0 or 1 whether queue is paused
+TrinketMenu.PausedQueue = { } -- 0 or 1 whether queue is paused
 
 function TrinketMenu.QueueInit()
 	TrinketMenuQueue = TrinketMenuQueue or {
-		Stats = {}, -- indexed by id of trinket, delay, priority and keep
-		Sort = {}, -- indexed by number, ids in order of use
-		Enabled = {} -- 0 or 1 whether auto queue is on for the slot
+		Stats = { }, -- indexed by id of trinket, delay, priority and keep
+		Sort = { }, -- indexed by number, ids in order of use
+		Enabled = { } -- 0 or 1 whether auto queue is on for the slot
 	}
 	TrinketMenuQueue.Sort[0] = TrinketMenuQueue.Sort[0] or {}
 	TrinketMenuQueue.Sort[1] = TrinketMenuQueue.Sort[1] or {}
@@ -21,7 +21,7 @@ function TrinketMenu.QueueInit()
 	TrinketMenu.ReflectQueueEnabled()
 	TrinketMenu.UpdateCombatQueue()
 
-	TrinketMenuQueue.Profiles = TrinketMenuQueue.Profiles or {}
+	TrinketMenuQueue.Profiles = TrinketMenuQueue.Profiles or { }
 	TrinketMenu.ValidateProfile()
 
 	TrinketMenu.OpenSort(0)
@@ -222,7 +222,7 @@ function TrinketMenu.SortValidate()
 		elseif selected >= (idx + 10) then
 			offset = (selected == #(list)) and TrinketMenu_SortScroll:GetVerticalScrollRange() or (parent:GetValue() + (parent:GetHeight() / 2))
 			parent:SetValue(offset)
-			PlaySound("UChatScrollButton");
+			PlaySound("UChatScrollButton")
 		end
 	end
 end
@@ -328,7 +328,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 
 	local buff = GetItemSpell(id)
 	if buff then
-		if UnitAura("player",buff) or (start > 0 and (duration-timeLeft) > 30 and timeLeft < 1) then
+		if UnitAura("player",buff) or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
 			icon:SetDesaturated(1)
 			return
 		end
@@ -341,7 +341,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 		end
 		if TrinketMenuQueue.Stats[id].delay then
 			-- leave if currently equipped trinket is on cooldown for less than its delay
-			if start > 0 and (duration-timeLeft) > 30 and timeLeft < TrinketMenuQueue.Stats[id].delay then
+			if start > 0 and (duration - timeLeft) > 30 and timeLeft < TrinketMenuQueue.Stats[id].delay then
 				icon:SetDesaturated(1)
 				return
 			end
@@ -364,7 +364,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 			break
 		end
 		if ready and list[i] == id then
-			rank=i
+			rank = i
 			break
 		end
 	end
@@ -463,7 +463,7 @@ function TrinketMenu.GetQueue(which)
 		DEFAULT_CHAT_FRAME:AddMessage("|cFFBBBBBBTrinketMenu.GetQueue:|cFFFFFFFF Parameter must be 0 for top trinket or 1 for bottom.")
 		return
 	end
-	local trinketList,name = {}
+	local trinketList, name = { }
 	for i = 1, #(TrinketMenuQueue.Sort[which]) do
 		name = TrinketMenu.GetNameByID(TrinketMenuQueue.Sort[which][i])
 		table.insert(trinketList, name)

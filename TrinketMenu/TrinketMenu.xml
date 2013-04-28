@@ -163,7 +163,6 @@
 			</CheckButton>
 			<Frame parent="TrinketMenu_Trinket1" inherits="TrinketMenuTimeTemplate"/>
 			<Frame parent="TrinketMenu_Trinket1" inherits="TrinketMenuQueueTemplate"/>
-
 		</Frames>
 
 		<Scripts>
@@ -316,7 +315,6 @@
 			<Frame parent="TrinketMenu_Menu28" inherits="TrinketMenuTimeTemplate"/>
 			<Frame parent="TrinketMenu_Menu29" inherits="TrinketMenuTimeTemplate"/>
 			<Frame parent="TrinketMenu_Menu30" inherits="TrinketMenuTimeTemplate"/>
-
 		</Frames>
 
 		<Scripts>
