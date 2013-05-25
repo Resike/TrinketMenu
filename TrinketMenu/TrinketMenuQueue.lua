@@ -287,7 +287,7 @@ end
 --[[ Auto queue processing ]]
 
 function TrinketMenu.TrinketNearReady(id)
-	local start,duration = GetItemCooldown(id)
+	local start, duration = GetItemCooldown(id)
 	if start == 0 or duration - (GetTime() - start) <= 30 then
 		return 1
 	end
@@ -352,7 +352,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 	icon:SetVertexColor(1, 1, 1)
 
 	local name
-	local ready = TrinketMenu.TrinketNearReady(GetInventoryItemLink("player", 13 + which))
+	local ready = TrinketMenu.TrinketNearReady(id)
 	if ready and TrinketMenu.CombatQueue[which] then
 		TrinketMenu.CombatQueue[which] = nil
 		TrinketMenu.UpdateCombatQueue()

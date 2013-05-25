@@ -1,6 +1,12 @@
-TrinketMenu 5.0.0
+TrinketMenu 5.0.2
 
 This is a mod to make swapping trinkets easier.  It will display your two equipped trinkets in a bar.  Mouseover on either trinket will display a menu of up to 30 trinkets in your bags to swap.
+
+__ New in 5.0.2 __
+- Fixed an itemID bug.
+
+__ New in 5.0.1 __
+- Updated for 5.3.
 
 __ New in 5.0.0 __
 - Updated for 5.2.
