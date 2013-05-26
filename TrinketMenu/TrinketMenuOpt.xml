@@ -1,4 +1,4 @@
-<Ui>
+﻿<Ui>
 	<Button name="TrinketMenu_TabTemplate" inherits="UIPanelButtonGrayTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="96" y="28"/>

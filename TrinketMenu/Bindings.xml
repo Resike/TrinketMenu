@@ -1,4 +1,4 @@
-<Bindings>
+﻿<Bindings>
 	<Binding name="Toggle TrinketMenu" header="TRINKETMENU">
 		TrinketMenu.ToggleFrame(TrinketMenuOptions.DisableToggle == "ON" and TrinketMenu_OptFrame or TrinketMenu_MainFrame)
 	</Binding>

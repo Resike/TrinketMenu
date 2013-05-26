@@ -1,8 +1,8 @@
-## Interface: 50300
-## Title: TrinketMenu |cFFFF00005.0.2
+﻿## Interface: 50300
+## Title: TrinketMenu |cFFFF00005.0.3
 ## Author: Gello, Resike
 ## Notes: AddOn to manage trinkets.
-## Version: 5.0.2
+## Version: 5.0.3
 ## SavedVariables: TrinketMenuOptions
 ## SavedVariablesPerCharacter: TrinketMenuPerOptions, TrinketMenuQueue
 

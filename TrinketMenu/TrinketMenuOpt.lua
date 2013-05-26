@@ -1,4 +1,4 @@
---[[ TrinketMenuOpt.lua : Options and sort window for TrinketMenu ]]
+﻿--[[ TrinketMenuOpt.lua : Options and sort window for TrinketMenu ]]
 
 TrinketMenu.CheckOptInfo = {
 {"ShowIcon","ON","Minimap Button","Show or hide minimap button."},

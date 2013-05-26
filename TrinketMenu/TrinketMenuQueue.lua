@@ -1,4 +1,4 @@
---[[ TrinketMenuQueue : auto queue system ]]
+﻿--[[ TrinketMenuQueue : auto queue system ]]
 
 TrinketMenu.PausedQueue = { } -- 0 or 1 whether queue is paused
 
