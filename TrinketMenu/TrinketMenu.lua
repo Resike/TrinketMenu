@@ -616,8 +616,8 @@ function TrinketMenu.MainTrinket_OnClick(self)
 			TrinketMenu.BuildMenu()
 		end
 	elseif IsShiftKeyDown() then
-		if ChatFrameEditBox:IsVisible() then
-			ChatFrameEditBox:Insert(GetInventoryItemLink("player", self:GetID()))
+		if ChatFrame1EditBox:IsVisible() then
+			ChatFrame1EditBox:Insert(GetInventoryItemLink("player", self:GetID()))
 		end
 	elseif IsAltKeyDown() and TrinketMenu.QueueInit then
 		local which = self:GetID() - 13
@@ -640,8 +640,8 @@ function TrinketMenu.MenuTrinket_OnClick(self)
 	self:SetChecked(0)
 	local bag, slot = TrinketMenu.BaggedTrinkets[self:GetID()].bag
 	local slot = TrinketMenu.BaggedTrinkets[self:GetID()].slot
-	if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
-		ChatFrameEditBox:Insert(GetContainerItemLink(bag, slot))
+	if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
+		ChatFrame1EditBox:Insert(GetContainerItemLink(bag, slot))
 	elseif IsAltKeyDown() then
 		local _, _, itemID = string.find(GetContainerItemLink(bag, slot) or "", "item:(%d+)")
 		if TrinketMenuPerOptions.Hidden[itemID] then
