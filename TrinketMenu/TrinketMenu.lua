@@ -2,6 +2,8 @@
 
 TrinketMenu = { }
 
+local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
+
 -- localized strings required to support engineering bags
 TrinketMenu.BAG = "Bag" -- 7th return of GetItemInfo on a normal bag
 TrinketMenu.ENGINEERING_BAG = "Engineering Bag" -- 7th return of GetItemInfo on an engineering bag
@@ -10,7 +12,6 @@ TrinketMenu.DEVICES = "Devices" -- 7th return of GetItemInfo on most engineered 
 TrinketMenu.REQUIRES_ENGINEERING = "Requires Engineering" -- from tooltip when GetItemInfo ambiguous
 
 function TrinketMenu.LoadDefaults()
-
 	TrinketMenuOptions = TrinketMenuOptions or {
 		IconPos = - 100,			-- angle of initial minimap icon position
 		ShowIcon = "ON",			-- whether to show the minimap button
@@ -21,9 +22,9 @@ function TrinketMenu.LoadDefaults()
 		KeepOpen = "OFF",			-- whether menu hides after use
 		KeepDocked = "ON",			-- whether to keep menu docked at all times
 		Notify = "OFF",				-- whether a message appears when a trinket is ready
-		DisableToggle="OFF",		-- whether minimap button toggles trinkets
-		NotifyUsedOnly="OFF",		-- whether notify happens only on trinkets used
-		NotifyChatAlso="OFF",		-- whether to send notify to chat also
+		DisableToggle = "OFF",		-- whether minimap button toggles trinkets
+		NotifyUsedOnly = "OFF",		-- whether notify happens only on trinkets used
+		NotifyChatAlso = "OFF",		-- whether to send notify to chat also
 		Locked = "OFF",				-- whether windows can be moved/scaled/rotated
 		ShowTooltips = "ON",		-- whether to display tooltips at all
 		NotifyThirty = "OFF",		-- whether to notify cooldowns at 30 seconds instead of 0
@@ -34,9 +35,8 @@ function TrinketMenu.LoadDefaults()
 		ShowHotKeys = "OFF",		-- whether hotkeys show on trinkets
 		StopOnSwap = "OFF",			-- whether to stop auto queue on all manual swaps
 		RedRange = "OFF",			-- whether to monitor and red out out of range trinkets
-		MenuOnRight = "OFF",		-- whether to open menu with right-click
+		MenuOnRight = "OFF"			-- whether to open menu with right-click
 	}
-
 	TrinketMenuPerOptions = TrinketMenuPerOptions or {
 		MainDock = "BOTTOMRIGHT",	-- corner of main window docked to
 		MenuDock = "BOTTOMLEFT",	-- corner menu window is docked from
@@ -46,25 +46,25 @@ function TrinketMenu.LoadDefaults()
 		YPos = 400,					-- top edge of main window
 		MainScale = 1,				-- scaling of main window
 		MenuScale = 1,				-- scaling of menu window
-		Visible="ON",				-- whether to display the trinkets
+		Visible = "ON",				-- whether to display the trinkets
 		FirstUse = true,			-- whether this is the first time this user has used the mod
-		ItemsUsed = {},				-- table of trinkets used and their cooldown status
+		ItemsUsed = { },			-- table of trinkets used and their cooldown status
 		Alpha = 1,					-- alpha of both windows
-		Hidden = {},				-- table of trinkets hidden
+		Hidden = { }				-- table of trinkets hidden
 	}
 end
 
 --[[ Misc Variables ]]--
 
-TrinketMenu_Version = "5.0.0"
+TrinketMenu_Version = "5.0.4"
 BINDING_HEADER_TRINKETMENU = "TrinketMenu"
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket0:LeftButton", "Use Top Trinket")
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket1:LeftButton", "Use Bottom Trinket")
 
 TrinketMenu.MaxTrinkets = 30 -- add more to TrinketMenu_MenuFrame if this changes
-TrinketMenu.BaggedTrinkets = {} -- indexed by number, 1-30 of trinkets in the menu
+TrinketMenu.BaggedTrinkets = { } -- indexed by number, 1-30 of trinkets in the menu
 TrinketMenu.NumberOfTrinkets = 0 -- number of trinkets in the menu
-TrinketMenu.CombatQueue = {} -- [0] or [1] = name of trinket queued for slot 0 or 1
+TrinketMenu.CombatQueue = { } -- [0] or [1] = name of trinket queued for slot 0 or 1
 TrinketMenu.Corners = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT"}
 
 --[[ Local functions ]]--
@@ -97,8 +97,8 @@ end
 -- hide the docking markers
 function TrinketMenu.ClearDocking()
 	for i = 1, 4 do
-		getglobal("TrinketMenu_MainDock_"..TrinketMenu.Corners[i]):Hide()
-		getglobal("TrinketMenu_MenuDock_"..TrinketMenu.Corners[i]):Hide()
+		_G["TrinketMenu_MainDock_"..TrinketMenu.Corners[i]]:Hide()
+		_G["TrinketMenu_MenuDock_"..TrinketMenu.Corners[i]]:Hide()
 	end
 end
 
@@ -139,15 +139,12 @@ function TrinketMenu.BuildMenu()
 	if not IsShiftKeyDown() and TrinketMenuOptions.MenuOnShift == "ON" then
 		return
 	end
-
 	local idx, i, j, k, texture = 1
 	local _, itemLink, itemID, itemName, equipSlot, itemTexture
-
 	-- go through bags and gather trinkets into .BaggedTrinkets
 	for i = 0, 4 do
 		for j = 1, GetContainerNumSlots(i) do
 			itemLink = GetContainerItemLink(i, j)
-			
 			if itemLink then
 				_, _, itemID, itemName = string.find(GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = GetItemInfo(itemID or "")
@@ -166,7 +163,6 @@ function TrinketMenu.BuildMenu()
 		end
 	end
 	TrinketMenu.NumberOfTrinkets = math.min(idx - 1, TrinketMenu.MaxTrinkets)
-
 	if TrinketMenu.NumberOfTrinkets < 1 then
 		-- user has no bagged trinkets :(
 		TrinketMenu_MenuFrame:Hide()
@@ -174,7 +170,6 @@ function TrinketMenu.BuildMenu()
 		-- display trinkets outward from docking point
 		local col, row, xpos, ypos = 0, 0, TrinketMenu.DockInfo("xstart"), TrinketMenu.DockInfo("ystart")
 		local max_cols = 1
-
 		if TrinketMenu.NumberOfTrinkets > 24 then
 			max_cols = 5
 		elseif TrinketMenu.NumberOfTrinkets > 18 then
@@ -187,11 +182,10 @@ function TrinketMenu.BuildMenu()
 		if TrinketMenuOptions.SetColumns == "ON" and TrinketMenuOptions.Columns then
 			max_cols = TrinketMenuOptions.Columns
 		end
-
-		local item,icon
-		for i=1,TrinketMenu.NumberOfTrinkets do
-			item = getglobal("TrinketMenu_Menu"..i)
-			icon = getglobal("TrinketMenu_Menu"..i.."Icon")
+		local item, icon
+		for i = 1, TrinketMenu.NumberOfTrinkets do
+			item = _G["TrinketMenu_Menu"..i]
+			icon = _G["TrinketMenu_Menu"..i.."Icon"]
 			icon:SetTexture(TrinketMenu.BaggedTrinkets[i].texture)
 			if TrinketMenuPerOptions.Hidden[TrinketMenu.BaggedTrinkets[i].id] then
 				icon:SetDesaturated(1)
@@ -199,7 +193,6 @@ function TrinketMenu.BuildMenu()
 				icon:SetDesaturated(0)
 			end
 			item:SetPoint("TOPLEFT", "TrinketMenu_MenuFrame", TrinketMenuPerOptions.MenuDock, xpos, ypos)
-
 			if TrinketMenuPerOptions.MenuOrient == "VERTICAL" then
 				xpos = xpos + TrinketMenu.DockInfo("xdir") * 40
 				col = col + 1
@@ -222,13 +215,12 @@ function TrinketMenu.BuildMenu()
 				item:Show()
 			end
 		end
-		for i=(TrinketMenu.NumberOfTrinkets + 1), TrinketMenu.MaxTrinkets do
-			getglobal("TrinketMenu_Menu"..i):Hide()
+		for i = (TrinketMenu.NumberOfTrinkets + 1), TrinketMenu.MaxTrinkets do
+			_G["TrinketMenu_Menu"..i]:Hide()
 		end
 		if col == 0 then
 			row = row - 1
 		end
-
 		if TrinketMenuPerOptions.MenuOrient == "VERTICAL" then
 			TrinketMenu_MenuFrame:SetWidth(12 + (max_cols * 40))
 			TrinketMenu_MenuFrame:SetHeight(12 + ((row + 1) * 40))
@@ -265,9 +257,8 @@ function TrinketMenu.Initialize()
 	TrinketMenuPerOptions.Alpha = TrinketMenuPerOptions.Alpha or 1 -- 3.5
 	TrinketMenuPerOptions.Hidden = TrinketMenuPerOptions.Hidden or { }
 	options.MenuOnRight = options.MenuOnRight or "OFF" -- 3.61
-
 	if TrinketMenuPerOptions.XPos and TrinketMenuPerOptions.YPos then
-		TrinketMenu_MainFrame:SetPoint("TOPLEFT","UIParent","BOTTOMLEFT", TrinketMenuPerOptions.XPos, TrinketMenuPerOptions.YPos)
+		TrinketMenu_MainFrame:SetPoint("TOPLEFT", "UIParent", "BOTTOMLEFT", TrinketMenuPerOptions.XPos, TrinketMenuPerOptions.YPos)
 	end
 	if TrinketMenuPerOptions.MainScale then
 		TrinketMenu_MainFrame:SetScale(TrinketMenuPerOptions.MainScale)
@@ -276,7 +267,6 @@ function TrinketMenu.Initialize()
 		TrinketMenu_MenuFrame:SetScale(TrinketMenuPerOptions.MenuScale)
 	end
 	TrinketMenu.ReflectAlpha()
-
 	TrinketMenu_Trinket0:SetAttribute("type", "item")
 	TrinketMenu_Trinket1:SetAttribute("type", "item")
 	TrinketMenu_Trinket0:SetAttribute("slot", 13)
@@ -289,7 +279,6 @@ function TrinketMenu.Initialize()
 	TrinketMenu_Trinket0:SetAttribute("shift-slot*", ATTRIBUTE_NOOP)
 	TrinketMenu_Trinket1:SetAttribute("shift-slot*", ATTRIBUTE_NOOP)
 	TrinketMenu.ReflectMenuOnRight()
-
 	TrinketMenu.InitTimers()
 	TrinketMenu.CreateTimer("UpdateWornTrinkets", TrinketMenu.UpdateWornTrinkets, .75)
 	TrinketMenu.CreateTimer("DockingMenu", TrinketMenu.DockingMenu, .2, 1)
@@ -297,29 +286,24 @@ function TrinketMenu.Initialize()
 	TrinketMenu.CreateTimer("TooltipUpdate", TrinketMenu.TooltipUpdate, 1, 1)
 	TrinketMenu.CreateTimer("CooldownUpdate", TrinketMenu.CooldownUpdate, 1, 1)
 	TrinketMenu.CreateTimer("RedRange", TrinketMenu.RedRangeUpdate, .33, 1)
-
-	hooksecurefunc("UseInventoryItem", TrinketMenu.newUseInventoryItem)
-	hooksecurefunc("UseAction", TrinketMenu.newUseAction)
-
+	--hooksecurefunc("UseInventoryItem", TrinketMenu.newUseInventoryItem)
+	--hooksecurefunc("UseAction", TrinketMenu.newUseAction)
 	TrinketMenu.InitOptions()
-
 	TrinketMenu.UpdateWornTrinkets()
 	TrinketMenu.DockWindows()
 	TrinketMenu.OrientWindows()
 	TrinketMenu.StartTimer("CooldownUpdate")
 	TrinketMenu.ReflectRedRange()
-
 	if TrinketMenuPerOptions.Visible == "ON" and (GetInventoryItemLink("player", 13) or GetInventoryItemLink("player", 14)) then
 		TrinketMenu_MainFrame:Show()
 	end
-
 	-- fix for OmniCC by N00bZXI
 	TrinketMenu_MainFrame:SetFrameLevel(1)
 	TrinketMenu_MenuFrame:SetFrameLevel(1)
 	TrinketMenu_Trinket0:SetFrameLevel(2)
 	TrinketMenu_Trinket1:SetFrameLevel(2)
 	for i = 1, 30 do
-		getglobal("TrinketMenu_Menu"..i):SetFrameLevel(2)
+		_G["TrinketMenu_Menu"..i]:SetFrameLevel(2)
 	end
 
 end
@@ -331,18 +315,7 @@ end
 
 -- returns true if the player is really dead or ghost, not merely FD
 function TrinketMenu.IsPlayerReallyDead()
-	local dead = UnitIsDeadOrGhost("player")
-	if (select(2,UnitClass("player"))) == "HUNTER" then
-		if UnitAura("player", "Feign Death") then
-			return nil
-		end
-		for i = 1, 24 do
-			if (select(3,UnitAura("player", i))) == "Interface\\Icons\\Ability_Rogue_FeignDeath" then
-				return nil
-			end
-		end
-	end
-	return dead
+	return UnitIsDeadOrGhost("player")
 end
 
 function TrinketMenu.ItemInfo(slot)
@@ -378,19 +351,20 @@ end
 
 function TrinketMenu.OnLoad(self)
 	SlashCmdList["TrinketMenuCOMMAND"] = TrinketMenu.SlashHandler
-	SLASH_TrinketMenuCOMMAND1 = "/trinketmenu";
-	SLASH_TrinketMenuCOMMAND2 = "/trinket";
-	
+	SLASH_TrinketMenuCOMMAND1 = "/trinketmenu"
+	SLASH_TrinketMenuCOMMAND2 = "/trinket"
 	self:RegisterEvent("PLAYER_LOGIN")
 end
 
-function TrinketMenu.OnEvent(self, event,...)
-	if event == "UNIT_INVENTORY_CHANGED" and (select(1,...)) == "player" then
-		TrinketMenu.UpdateWornTrinkets()
+function TrinketMenu.OnEvent(self, event, ...)
+	if event == "UNIT_INVENTORY_CHANGED" then
+		local unitID = ...
+		if unitID == "player" then
+			TrinketMenu.UpdateWornTrinkets()
+		end
 	elseif event == "ACTIONBAR_UPDATE_COOLDOWN" then
 		TrinketMenu.UpdateWornCooldowns(1)
 	elseif (event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_UNGHOST" or event == "PLAYER_ALIVE") and not TrinketMenu.IsPlayerReallyDead() then
-		-- trinkets can now be swapped after combat/death
 		if TrinketMenu.CombatQueue[0] or TrinketMenu.CombatQueue[1] then
 			TrinketMenu.EquipTrinketByName(TrinketMenu.CombatQueue[0], 13)
 			TrinketMenu.EquipTrinketByName(TrinketMenu.CombatQueue[1], 14)
@@ -417,9 +391,9 @@ function TrinketMenu.OnEvent(self, event,...)
 end
 
 function TrinketMenu.UpdateWornTrinkets()
-	local texture,name = TrinketMenu.ItemInfo(13)
+	local texture, name = TrinketMenu.ItemInfo(13)
 	TrinketMenu_Trinket0Icon:SetTexture(texture)
-	texture,name = TrinketMenu.ItemInfo(14)
+	texture, name = TrinketMenu.ItemInfo(14)
 	TrinketMenu_Trinket1Icon:SetTexture(texture)
 	TrinketMenu_Trinket0Icon:SetDesaturated(0)
 	TrinketMenu_Trinket0:SetChecked(0)
@@ -433,7 +407,6 @@ end
 
 function TrinketMenu.SlashHandler(msg)
 	local _, _, which, profile = string.find(msg, "load (.+) (.+)")
-
 	if profile and TrinketMenu.SetQueue then
 		which = string.lower(which)
 		if which == "top" or which == "0" then
@@ -446,9 +419,7 @@ function TrinketMenu.SlashHandler(msg)
 			return
 		end
 	end
-
 	msg = string.lower(msg)
-
 	if not msg or msg == "" then
 		TrinketMenu.ToggleFrame(TrinketMenu_MainFrame)
 	elseif string.find(msg, "^opt") or string.find(msg, "^config") then
@@ -512,7 +483,12 @@ function TrinketMenu.ResetSettings()
 	StaticPopupDialogs["TRINKETMENURESET"] = {
 		text = "Are you sure you want to reset TrinketMenu to default state and reload the UI?",
 		button1 = "Yes", button2 = "No", showAlert = 1, timeout = 0, whileDead = 1,
-		OnAccept = function() TrinketMenuOptions = nil TrinketMenuPerOptions = nil TrinketMenuQueue = nil ReloadUI() end,
+		OnAccept = function()
+			TrinketMenuOptions = nil
+			TrinketMenuPerOptions = nil
+			TrinketMenuQueue = nil
+			ReloadUI()
+		end
 	}
 	StaticPopup_Show("TRINKETMENURESET")
 end
@@ -549,7 +525,7 @@ function TrinketMenu.InitTimers()
 end
 
 function TrinketMenu.CreateTimer(name, func, delay, rep)
-	TrinketMenu.TimerPool[name] = { func = func, delay = delay, rep = rep, elapsed = delay }
+	TrinketMenu.TimerPool[name] = {func = func, delay = delay, rep = rep, elapsed = delay}
 end
 
 function TrinketMenu.IsTimerActive(name)
@@ -564,7 +540,7 @@ end
 function TrinketMenu.StartTimer(name, delay)
 	TrinketMenu.TimerPool[name].elapsed = delay or TrinketMenu.TimerPool[name].delay
 	if not TrinketMenu.IsTimerActive(name) then
-		table.insert(TrinketMenu.Timers,name)
+		table.insert(TrinketMenu.Timers, name)
 		TrinketMenu_TimersFrame:Show()
 	end
 end
@@ -573,7 +549,7 @@ function TrinketMenu.StopTimer(name)
 	local idx = TrinketMenu.IsTimerActive(name)
 	if idx then
 		table.remove(TrinketMenu.Timers, idx)
-		if #(TrinketMenu.Timers) < 1 then
+		if #TrinketMenu.Timers < 1 then
 			TrinketMenu_TimersFrame:Hide()
 		end
 	end
@@ -628,8 +604,8 @@ function TrinketMenu.MainTrinket_OnClick(self)
 			TrinketMenuQueue.Enabled[which] = 1
 		end
 		TrinketMenu.ReflectQueueEnabled()
-		TrinketMenu.UpdateCombatQueue()
 		-- toggle queue
+		TrinketMenu.UpdateCombatQueue()
 	else
 		TrinketMenu.ReflectTrinketUse(self:GetID())
 	end
@@ -668,20 +644,17 @@ end
 
 --[[ Docking ]]
 
-function TrinketMenu.MenuFrame_OnMouseDown()
-	local arg1 = GetMouseButtonClicked()
-	if arg1 == "LeftButton" and TrinketMenuOptions.Locked == "OFF" then
+function TrinketMenu.MenuFrame_OnMouseDown(button)
+	if button == "LeftButton" and TrinketMenuOptions.Locked == "OFF" then
 		TrinketMenu_MenuFrame:StartMoving()
-
 		if TrinketMenuOptions.KeepDocked == "ON" then
 			TrinketMenu.StartTimer("DockingMenu")
 		end
 	end
 end
 
-function TrinketMenu.MenuFrame_OnMouseUp()
-	local arg1 = GetMouseButtonClicked()
-	if arg1 == "LeftButton" then
+function TrinketMenu.MenuFrame_OnMouseUp(button)
+	if button == "LeftButton" then
 		TrinketMenu.StopTimer("DockingMenu")
 		TrinketMenu_MenuFrame:StopMovingOrSizing()
 		if TrinketMenuOptions.KeepDocked == "ON" then
@@ -703,7 +676,6 @@ function TrinketMenu.DockingMenu()
 	local mainscale = TrinketMenu_MainFrame:GetScale()
 	local menuscale = TrinketMenu_MenuFrame:GetScale()
 	local near = TrinketMenu.Near
-
 	if near(main:GetRight() * mainscale,menu:GetLeft() * menuscale) then
 		if near(main:GetTop() * mainscale,menu:GetTop() * menuscale) then
 			TrinketMenuPerOptions.MainDock = "TOPRIGHT"
@@ -738,8 +710,8 @@ function TrinketMenu.DockingMenu()
 		end
 	end
 	TrinketMenu.ClearDocking()
-	getglobal("TrinketMenu_MainDock_"..TrinketMenuPerOptions.MainDock):Show()
-	getglobal("TrinketMenu_MenuDock_"..TrinketMenuPerOptions.MenuDock):Show()
+	_G["TrinketMenu_MainDock_"..TrinketMenuPerOptions.MainDock]:Show()
+	_G["TrinketMenu_MenuDock_"..TrinketMenuPerOptions.MenuDock]:Show()
 end
 
 function TrinketMenu.MenuMouseover()
@@ -765,7 +737,7 @@ function TrinketMenu.UpdateMenuCooldowns()
 	local start,duration,enable
 	for i = 1, TrinketMenu.NumberOfTrinkets do
 		start,duration,enable = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
-		CooldownFrame_SetTimer(getglobal("TrinketMenu_Menu"..i.."Cooldown"), start, duration, enable)
+		CooldownFrame_SetTimer(_G["TrinketMenu_Menu"..i.."Cooldown"], start, duration, enable)
 	end
 	TrinketMenu.WriteMenuCooldowns()
 end
@@ -773,7 +745,7 @@ end
 --[[ Item use ]]
 
 function TrinketMenu.ReflectTrinketUse(slot)
-	getglobal("TrinketMenu_Trinket"..(slot - 13)):SetChecked(1)
+	_G["TrinketMenu_Trinket"..(slot - 13)]:SetChecked(1)
 	TrinketMenu.StartTimer("UpdateWornTrinkets")
 	local _, _, id = string.find(GetInventoryItemLink("player", slot) or "", "item:(%d+)")
 	if id then
@@ -787,7 +759,7 @@ function TrinketMenu.newUseInventoryItem(slot)
 	end
 end
 
-function TrinketMenu.newUseAction(slot, cursor, self)
+function TrinketMenu.newUseAction(slot)
 	if IsEquippedAction(slot) then
 		TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
 		TrinketMenu_TooltipScan:SetAction(slot)
@@ -804,10 +776,10 @@ end
 --[[ Tooltips ]]
 
 function TrinketMenu.WornTrinketTooltip(self)
-	local id = self:GetID()
 	if TrinketMenuOptions.ShowTooltips == "OFF" then
 		return
 	end
+	local id = self:GetID()
 	TrinketMenu.TooltipOwner = self
 	TrinketMenu.TooltipType = "INVENTORY"
 	TrinketMenu.TooltipSlot = id
@@ -816,10 +788,10 @@ function TrinketMenu.WornTrinketTooltip(self)
 end
 
 function TrinketMenu.MenuTrinketTooltip(self)
-	local id = self:GetID()
 	if TrinketMenuOptions.ShowTooltips == "OFF" then
 		return
 	end
+	local id = self:GetID()
 	TrinketMenu.TooltipOwner = self
 	TrinketMenu.TooltipType = "BAG"
 	TrinketMenu.TooltipBag = TrinketMenu.BaggedTrinkets[id].bag
@@ -881,12 +853,12 @@ function TrinketMenu.OnTooltip(self, line1, line2)
 			GameTooltip:Show()
 		else
 			local name = self:GetName() or ""
-			for i = 1, #(TrinketMenu.CheckOptInfo) do
+			for i = 1, #TrinketMenu.CheckOptInfo do
 				if name == "TrinketMenu_Opt"..TrinketMenu.CheckOptInfo[i][1] and TrinketMenu.CheckOptInfo[i][3] then
 					TrinketMenu.OnTooltip(self, TrinketMenu.CheckOptInfo[i][3], TrinketMenu.CheckOptInfo[i][4])
 				end
 			end
-			for i = 1, #(TrinketMenu.TooltipInfo) do
+			for i = 1, #TrinketMenu.TooltipInfo do
 				if TrinketMenu.TooltipInfo[i][1] == name and TrinketMenu.TooltipInfo[i][2] then
 					TrinketMenu.OnTooltip(self, TrinketMenu.TooltipInfo[i][2], TrinketMenu.TooltipInfo[i][3])
 				end
@@ -904,7 +876,7 @@ function TrinketMenu.ShrinkTooltip(owner)
 		local name = GameTooltipTextLeft1:GetText()
 		local line, cooldown, charge
 		for i = 2, GameTooltip:NumLines() do
-			line = getglobal("GameTooltipTextLeft"..i)
+			line = _G["GameTooltipTextLeft"..i]
 			if line:IsVisible() then
 				line = line:GetText() or ""
 				if string.find(line,COOLDOWN_REMAINING) then
@@ -933,7 +905,7 @@ function TrinketMenu.IsEngineered(bag, slot)
 		TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
 		TrinketMenu_TooltipScan:SetHyperlink(item)
 		for i = 1, TrinketMenu_TooltipScan:NumLines() do
-			if string.match(getglobal("TrinketMenu_TooltipScanTextLeft"..i):GetText() or "", TrinketMenu.REQUIRES_ENGINEERING) then
+			if string.match(_G["TrinketMenu_TooltipScanTextLeft"..i]:GetText() or "", TrinketMenu.REQUIRES_ENGINEERING) then
 				return 1
 			end
 		end
@@ -1007,7 +979,7 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 					PickupContainerItem(b, s)
 					PickupInventoryItem(slot)
 				end
-				getglobal("TrinketMenu_Trinket"..(slot - 13).."Icon"):SetDesaturated(1)
+				_G["TrinketMenu_Trinket"..(slot - 13).."Icon"]:SetDesaturated(1)
 				TrinketMenu.StartTimer("UpdateWornTrinkets") -- in case it's not equipped (stunned, etc)
 			end
 		end
@@ -1019,7 +991,7 @@ function TrinketMenu.UpdateCombatQueue()
 	local _, bag, slot
 	for which = 0, 1 do
 		local trinket = TrinketMenu.CombatQueue[which]
-		local icon = getglobal("TrinketMenu_Trinket"..which.."Queue")
+		local icon = _G["TrinketMenu_Trinket"..which.."Queue"]
 		icon:Hide()
 		if trinket then
 			_, bag, slot = TrinketMenu.FindItem(trinket)
@@ -1097,7 +1069,6 @@ function TrinketMenu.CooldownUpdate()
 			end
 		end
 	end
-
 	-- update cooldown numbers
 	if TrinketMenuOptions.CooldownCount == "ON" then
 		if TrinketMenu_MainFrame:IsVisible() then
@@ -1107,7 +1078,6 @@ function TrinketMenu.CooldownUpdate()
 			TrinketMenu.WriteMenuCooldowns()
 		end
 	end
-
 	if TrinketMenu.PeriodicQueueCheck then
 		TrinketMenu.PeriodicQueueCheck()
 	end
@@ -1125,7 +1095,7 @@ function TrinketMenu.WriteMenuCooldowns()
 	local start, duration
 	for i = 1, TrinketMenu.NumberOfTrinkets do
 		start, duration = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
-		TrinketMenu.WriteCooldown(getglobal("TrinketMenu_Menu"..i.."Time"), start, duration)
+		TrinketMenu.WriteCooldown(_G["TrinketMenu_Menu"..i.."Time"], start, duration)
 	end
 end
 
@@ -1164,7 +1134,7 @@ function TrinketMenu.KeyBindingsChanged()
 		local key
 		for i = 0, 1 do
 			key = GetBindingKey("CLICK TrinketMenu_Trinket"..i..":LeftButton")
-			getglobal("TrinketMenu_Trinket"..i.."HotKey"):SetText(GetBindingText(key or "", nil, 1))
+			_G["TrinketMenu_Trinket"..i.."HotKey"]:SetText(GetBindingText(key or "", nil, 1))
 		end
 	else
 		TrinketMenu_Trinket0HotKey:SetText("")
@@ -1189,9 +1159,9 @@ function TrinketMenu.RedRangeUpdate()
 	for i = 13, 14 do
 		item = GetInventoryItemLink("player", i)
 		if item and IsItemInRange(item) == 0 then
-			getglobal("TrinketMenu_Trinket"..(i - 13).."Icon"):SetVertexColor(1, .3, .3)
+			_G["TrinketMenu_Trinket"..(i - 13).."Icon"]:SetVertexColor(1, .3, .3)
 		else
-			getglobal("TrinketMenu_Trinket"..(i - 13).."Icon"):SetVertexColor(1, 1, 1)
+			_G["TrinketMenu_Trinket"..(i - 13).."Icon"]:SetVertexColor(1, 1, 1)
 		end
 	end
 end

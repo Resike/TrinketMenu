@@ -1,52 +1,52 @@
 ﻿--[[ TrinketMenuOpt.lua : Options and sort window for TrinketMenu ]]
 
+local _G, math, string, table = _G, math, string, table
+
 TrinketMenu.CheckOptInfo = {
-{"ShowIcon","ON","Minimap Button","Show or hide minimap button."},
-{"SquareMinimap","OFF","Square Minimap","Move minimap button as if around a square minimap.","ShowIcon"},
-{"CooldownCount","OFF","Cooldown Numbers","Display time remaining on cooldowns ontop of the button."},
-{"TooltipFollow","OFF","At Mouse","Display all tooltips near the mouse.","ShowTooltips"},
-{"KeepOpen","OFF","Keep Menu Open","Keep menu open at all times."},
-{"KeepDocked","ON","Keep Menu Docked","Keep menu docked at all times."},
-{"Notify","OFF","Notify When Ready","Sends an overhead notification when a trinket's cooldown is complete."},
-{"DisableToggle","OFF","Disable Toggle","Disables the minimap button's ability to toggle the trinket frame.","ShowIcon"},
-{"NotifyChatAlso","OFF","Notify Chat Also","Sends notifications through chat also."},
-{"Locked","OFF","Lock Windows","Prevents the windows from being moved, resized or rotated."},
-{"ShowTooltips","ON","Show Tooltips","Shows tooltips."},
-{"NotifyThirty","ON","Notify At 30 sec","Sends an overhead notification when a trinket has 30 seconds left on cooldown."},
-{"MenuOnShift","OFF","Menu On Shift","Check this to prevent the menu appearing unless Shift is held."},
-{"TinyTooltips","OFF","Tiny Tooltips","Shrink trinket tooltips to only their name, charges and cooldown.","ShowTooltips"},
-{"SetColumns","OFF","Wrap at: ","Define how many trinkets before the menu will wrap to the next row.\n\nUncheck to let TrinketMenu choose how to wrap the menu."},
-{"LargeCooldown","ON","Large Numbers","Display the cooldown time in a larger font.","CooldownCount"},
-{"ShowHotKeys","ON","Show Key Bindings","Display the key bindings over the equipped trinkets."},
-{"StopOnSwap","OFF","Stop Queue On Swap","Swapping a passive trinket stops an auto queue.  Check this to also stop the auto queue when a clickable trinket is manually swapped in via TrinketMenu.  This will have the most use to those with frequent trinkets marked Priority."},
-{"HideOnLoad","OFF","Close On Profile Load","Check this to dismiss this window when you load a profile."},
-{"RedRange","OFF","Red Out of Range","Check this to red out worn trinkets that are out of range to a valid target.  ie, Gnomish Death Ray and Gnomish Net-O-Matic."},
-{"MenuOnRight","OFF","Menu On Right-Click","Check this to prevent the menu from appearing until either worn trinket is right-clicked.\n\nNOTE: This setting CANNOT be changed while in combat."},
+	{"ShowIcon", "ON", "Minimap Button", "Show or hide minimap button."},
+	{"SquareMinimap", "OFF", "Square Minimap", "Move minimap button as if around a square minimap.", "ShowIcon"},
+	{"CooldownCount", "OFF", "Cooldown Numbers", "Display time remaining on cooldowns ontop of the button."},
+	{"TooltipFollow", "OFF", "At Mouse", "Display all tooltips near the mouse.", "ShowTooltips"},
+	{"KeepOpen", "OFF", "Keep Menu Open", "Keep menu open at all times."},
+	{"KeepDocked", "ON", "Keep Menu Docked", "Keep menu docked at all times."},
+	{"Notify", "OFF", "Notify When Ready", "Sends an overhead notification when a trinket's cooldown is complete."},
+	{"DisableToggle", "OFF", "Disable Toggle", "Disables the minimap button's ability to toggle the trinket frame.", "ShowIcon"},
+	{"NotifyChatAlso", "OFF", "Notify Chat Also", "Sends notifications through chat also."},
+	{"Locked", "OFF", "Lock Windows", "Prevents the windows from being moved, resized or rotated."},
+	{"ShowTooltips", "ON", "Show Tooltips", "Shows tooltips."},
+	{"NotifyThirty", "ON", "Notify At 30 sec", "Sends an overhead notification when a trinket has 30 seconds left on cooldown."},
+	{"MenuOnShift", "OFF", "Menu On Shift", "Check this to prevent the menu appearing unless Shift is held."},
+	{"TinyTooltips", "OFF", "Tiny Tooltips", "Shrink trinket tooltips to only their name, charges and cooldown.", "ShowTooltips"},
+	{"SetColumns", "OFF", "Wrap at: ", "Define how many trinkets before the menu will wrap to the next row.\n\nUncheck to let TrinketMenu choose how to wrap the menu."},
+	{"LargeCooldown", "ON", "Large Numbers", "Display the cooldown time in a larger font.", "CooldownCount"},
+	{"ShowHotKeys", "ON", "Show Key Bindings", "Display the key bindings over the equipped trinkets."},
+	{"StopOnSwap", "OFF", "Stop Queue On Swap", "Swapping a passive trinket stops an auto queue.  Check this to also stop the auto queue when a clickable trinket is manually swapped in via TrinketMenu.  This will have the most use to those with frequent trinkets marked Priority."},
+	{"HideOnLoad", "OFF", "Close On Profile Load", "Check this to dismiss this window when you load a profile."},
+	{"RedRange", "OFF", "Red Out of Range", "Check this to red out worn trinkets that are out of range to a valid target.  ie, Gnomish Death Ray and Gnomish Net-O-Matic."},
+	{"MenuOnRight", "OFF", "Menu On Right-Click", "Check this to prevent the menu from appearing until either worn trinket is right-clicked.\n\nNOTE: This setting CANNOT be changed while in combat."}
 }
 
--- table.insert(TrinketMenu.CheckOptInfo,)
-
 TrinketMenu.TooltipInfo = {
-{"TrinketMenu_LockButton","Lock Windows","Prevents the windows from being moved, resized or rotated."},
-{"TrinketMenu_Trinket0Check","Top Trinket Auto Queue","Check this to enable auto queue for this trinket slot.  You can also Alt+Click the trinket slot to toggle Auto Queue."},
-{"TrinketMenu_Trinket1Check","Bottom Trinket Auto Queue","Check this to enable auto queue for this trinket slot.  You can also Alt+Click the trinket slot to toggle Auto Queue."},
-{"TrinketMenu_SortPriority","High Priority","When checked, this trinket will be swapped in as soon as possible, whether the equipped trinket is on cooldown or not.\n\nWhen unchecked, this trinket will not equip over one already worn that's not on cooldown."},
-{"TrinketMenu_SortDelay","Swap Delay","This is the time (in seconds) before a trinket will be swapped out.  ie, for Earthstrike you want 20 seconds to get the full 20 second effect of the buff."},
-{"TrinketMenu_SortKeepEquipped","Pause Queue","Check this to suspend the auto queue while this trinket is equipped. ie, for Carrot on a Stick if you have a mod to auto-equip it to a slot with Auto Queue active."},
-{"TrinketMenu_Profiles","Profiles","Here you can load or save auto queue profiles."},
-{"TrinketMenu_Delete","Delete","Remove this trinket from the list.  Trinkets further down the list don't affect performance at all.  This option is merely to keep the list managable. Note: Trinkets in your bags will return to end of the list."},
-{"TrinketMenu_ProfilesDelete","Delete Profile","Remove this profile."},
-{"TrinketMenu_ProfilesLoad","Load Profile","Load a queue order for the selected trinket slot.  You can double-click a profile to load it also."},
-{"TrinketMenu_ProfilesSave","Save Profile","Save the queue order from the selected trinket slot.  Either trinket slot can use saved profiles."},
-{"TrinketMenu_ProfileName","Profile Name","Enter a name to call the profile.  When saved, you can load this profile to either trinket slot."},
+	{"TrinketMenu_LockButton", "Lock Windows", "Prevents the windows from being moved, resized or rotated."},
+	{"TrinketMenu_Trinket0Check", "Top Trinket Auto Queue", "Check this to enable auto queue for this trinket slot.  You can also Alt+Click the trinket slot to toggle Auto Queue."},
+	{"TrinketMenu_Trinket1Check", "Bottom Trinket Auto Queue", "Check this to enable auto queue for this trinket slot.  You can also Alt+Click the trinket slot to toggle Auto Queue."},
+	{"TrinketMenu_SortPriority", "High Priority", "When checked, this trinket will be swapped in as soon as possible, whether the equipped trinket is on cooldown or not.\n\nWhen unchecked, this trinket will not equip over one already worn that's not on cooldown."},
+	{"TrinketMenu_SortDelay", "Swap Delay", "This is the time (in seconds) before a trinket will be swapped out.  ie, for Earthstrike you want 20 seconds to get the full 20 second effect of the buff."},
+	{"TrinketMenu_SortKeepEquipped", "Pause Queue", "Check this to suspend the auto queue while this trinket is equipped. ie, for Carrot on a Stick if you have a mod to auto-equip it to a slot with Auto Queue active."},
+	{"TrinketMenu_Profiles", "Profiles", "Here you can load or save auto queue profiles."},
+	{"TrinketMenu_Delete", "Delete", "Remove this trinket from the list.  Trinkets further down the list don't affect performance at all.  This option is merely to keep the list managable. Note: Trinkets in your bags will return to end of the list."},
+	{"TrinketMenu_ProfilesDelete", "Delete Profile", "Remove this profile."},
+	{"TrinketMenu_ProfilesLoad", "Load Profile", "Load a queue order for the selected trinket slot.  You can double-click a profile to load it also."},
+	{"TrinketMenu_ProfilesSave", "Save Profile", "Save the queue order from the selected trinket slot.  Either trinket slot can use saved profiles."},
+	{"TrinketMenu_ProfileName", "Profile Name", "Enter a name to call the profile.  When saved, you can load this profile to either trinket slot."}
 }
 
 function TrinketMenu.InitOptions()
 	TrinketMenu.CreateTimer("DragMinimapButton", TrinketMenu.DragMinimapButton, 0, 1)
 	TrinketMenu.MoveMinimapButton()
 	local item
-	for i = 1, #(TrinketMenu.CheckOptInfo) do
-		item = getglobal("TrinketMenu_Opt"..TrinketMenu.CheckOptInfo[i][1].."Text")
+	for i = 1, #TrinketMenu.CheckOptInfo do
+		item = _G["TrinketMenu_Opt"..TrinketMenu.CheckOptInfo[i][1].."Text"]
 		if item then
 			item:SetText(TrinketMenu.CheckOptInfo[i][3])
 			item:SetTextColor(.95, .95, .95)
@@ -55,7 +55,6 @@ function TrinketMenu.InitOptions()
 	TrinketMenu.Tab_OnClick(1)
 	table.insert(UISpecialFrames, "TrinketMenu_OptFrame")
 	TrinketMenu_Title:SetText("TrinketMenu "..TrinketMenu_Version)
-
 	TrinketMenu_OptFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	TrinketMenu_SubOptFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	if TrinketMenu.QueueInit then
@@ -70,6 +69,7 @@ function TrinketMenu.InitOptions()
 		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT", 8, - 24)
 	end
 	TrinketMenu_OptColumnsSlider:SetValue(TrinketMenuOptions.Columns)
+	TrinketMenu_OptColumnsSliderText:SetText(TrinketMenuOptions.Columns.." trinkets")
 	TrinketMenu_OptMainScaleSlider:SetValue(TrinketMenuPerOptions.MainScale)
 	TrinketMenu_OptMenuScaleSlider:SetValue(TrinketMenuPerOptions.MenuScale)
 	TrinketMenu.ReflectLock()
@@ -147,19 +147,19 @@ end
 --[[ CheckButton ]]
 
 function TrinketMenu.ValidateChecks()
-	local check,button
-	for i = 1, #(TrinketMenu.CheckOptInfo) do
+	local check, button
+	for i = 1, #TrinketMenu.CheckOptInfo do
 		check = TrinketMenu.CheckOptInfo[i]
-		button = getglobal("TrinketMenu_Opt"..check[1])
+		button = _G["TrinketMenu_Opt"..check[1]]
 		if button then
 			button:SetChecked(TrinketMenuOptions[check[1]] == "ON")
 			if check[5] then
 				if TrinketMenuOptions[check[5]] == "ON" then
 					button:Enable()
-					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.95, .95, .95)
+					_G["TrinketMenu_Opt"..check[1].."Text"]:SetTextColor(.95, .95, .95)
 				else
 					button:Disable()
-					getglobal("TrinketMenu_Opt"..check[1].."Text"):SetTextColor(.5, .5, .5)
+					_G["TrinketMenu_Opt"..check[1].."Text"]:SetTextColor(.5, .5, .5)
 				end
 			end
 		end
@@ -169,7 +169,15 @@ function TrinketMenu.ValidateChecks()
 	TrinketMenu_OptColumnsSlider:SetValue(TrinketMenuOptions.Columns)
 end
 
-function TrinketMenu.OptColumnsSlider_OnValueChanged(self)
+function TrinketMenu.OptColumnsSlider_OnValueChanged(self, value)
+	if not self._onsetting then
+		self._onsetting = true
+		self:SetValue(self:GetValue())
+		value = self:GetValue()
+		self._onsetting = false
+	else
+		return
+	end
 	if TrinketMenuOptions then
 		TrinketMenuOptions.Columns = self:GetValue()
 		TrinketMenu_OptColumnsSliderText:SetText(TrinketMenuOptions.Columns.." trinkets")
@@ -179,7 +187,15 @@ function TrinketMenu.OptColumnsSlider_OnValueChanged(self)
 	end
 end
 
-function TrinketMenu.OptMainScaleSlider_OnValueChanged(self)
+function TrinketMenu.OptMainScaleSlider_OnValueChanged(self, value)
+	if not self._onsetting then
+		self._onsetting = true
+		self:SetValue(self:GetValue())
+		value = self:GetValue()
+		self._onsetting = false
+	else
+		return
+	end
 	if TrinketMenuPerOptions then
 		TrinketMenuPerOptions.MainScale = self:GetValue()
 		TrinketMenu_OptMainScaleSliderText:SetText(format("Main Scale: %.2f", TrinketMenuPerOptions.MainScale))
@@ -187,11 +203,27 @@ function TrinketMenu.OptMainScaleSlider_OnValueChanged(self)
 	end
 end
 
-function TrinketMenu.OptMenuScaleSlider_OnValueChanged(self)
+function TrinketMenu.OptMenuScaleSlider_OnValueChanged(self, value)
+	if not self._onsetting then
+		self._onsetting = true
+		self:SetValue(self:GetValue())
+		value = self:GetValue()
+		self._onsetting = false
+	else
+		return
+	end
 	if TrinketMenuPerOptions then
 		TrinketMenuPerOptions.MenuScale = self:GetValue()
 		TrinketMenu_OptMenuScaleSliderText:SetText(format("Menu Scale: %.2f", TrinketMenuPerOptions.MenuScale))
 		TrinketMenu_MenuFrame:SetScale(TrinketMenuPerOptions.MenuScale)
+	end
+end
+
+function TrinketMenu.SliderOnMouseWheel(self, delta)
+	if delta > 0 then
+		self:SetValue(self:GetValue() + self:GetValueStep())
+	else
+		self:SetValue(self:GetValue() - self:GetValueStep())
 	end
 end
 
@@ -202,7 +234,6 @@ function TrinketMenu.CheckButton_OnClick(self)
 		PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff")
 		TrinketMenu.ValidateChecks()
 	end
-
 	if self == TrinketMenu_OptCooldownCount then
 		TrinketMenu.WriteWornCooldowns()
 		TrinketMenu.WriteMenuCooldowns()
@@ -259,7 +290,7 @@ function TrinketMenu.ReflectCooldownFont()
 end
 
 function TrinketMenu.SetCooldownFont(button)
-	local item = getglobal(button.."Time")
+	local item = _G[button.."Time"]
 	if TrinketMenuOptions.LargeCooldown == "ON" then
 		item:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
 		item:SetTextColor(1, .82, 0, 1)
@@ -295,12 +326,12 @@ function TrinketMenu.Tab_OnClick(id)
 		TrinketMenu_ProfilesFrame:Hide()
 	end
 	for i = 1, 3 do
-		tab = getglobal("TrinketMenu_Tab"..i)
+		tab = _G["TrinketMenu_Tab"..i]
 		if tab then
 			tab:UnlockHighlight()
 		end
 	end
-	getglobal("TrinketMenu_Tab"..id):LockHighlight()
+	_G["TrinketMenu_Tab"..id]:LockHighlight()
 	if id == 1 then
 		TrinketMenu_SubOptFrame:Show()
 		if TrinketMenu_SubQueueFrame then
