@@ -396,9 +396,9 @@ function TrinketMenu.UpdateWornTrinkets()
 	texture, name = TrinketMenu.ItemInfo(14)
 	TrinketMenu_Trinket1Icon:SetTexture(texture)
 	TrinketMenu_Trinket0Icon:SetDesaturated(false)
-	TrinketMenu_Trinket0:SetChecked(0)
+	TrinketMenu_Trinket0:SetChecked(false)
 	TrinketMenu_Trinket1Icon:SetDesaturated(false)
-	TrinketMenu_Trinket1:SetChecked(0)
+	TrinketMenu_Trinket1:SetChecked(false)
 	TrinketMenu.UpdateWornCooldowns()
 	if TrinketMenu_MenuFrame:IsVisible() then
 		TrinketMenu.BuildMenu()
@@ -584,7 +584,7 @@ end
 
 function TrinketMenu.MainTrinket_OnClick(self)
 	local arg1 = GetMouseButtonClicked()
-	self:SetChecked(0)
+	self:SetChecked(false)
 	if arg1 == "RightButton" and TrinketMenuOptions.MenuOnRight == "ON" then
 		if TrinketMenu_MenuFrame:IsVisible() then
 			TrinketMenu_MenuFrame:Hide()
@@ -613,7 +613,7 @@ end
 
 function TrinketMenu.MenuTrinket_OnClick(self)
 	local arg1 = GetMouseButtonClicked()
-	self:SetChecked(0)
+	self:SetChecked(false)
 	local bag, slot = TrinketMenu.BaggedTrinkets[self:GetID()].bag
 	local slot = TrinketMenu.BaggedTrinkets[self:GetID()].slot
 	if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
@@ -745,7 +745,7 @@ end
 --[[ Item use ]]
 
 function TrinketMenu.ReflectTrinketUse(slot)
-	_G["TrinketMenu_Trinket"..(slot - 13)]:SetChecked(1)
+	_G["TrinketMenu_Trinket"..(slot - 13)]:SetChecked(true)
 	TrinketMenu.StartTimer("UpdateWornTrinkets")
 	local _, _, id = string.find(GetInventoryItemLink("player", slot) or "", "item:(%d+)")
 	if id then

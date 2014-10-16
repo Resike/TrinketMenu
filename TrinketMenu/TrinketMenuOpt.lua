@@ -269,7 +269,11 @@ function TrinketMenu.ReflectLock()
 	TrinketMenu_MenuFrame:SetBackdropColor(c, c, c, c)
 	TrinketMenu_MenuFrame:SetBackdropBorderColor(c, c, c, c * 2)
 	TrinketMenu_MenuFrame:EnableMouse(c * 2)
-	TrinketMenu_OptLocked:SetChecked(1 - c * 2)
+	if TrinketMenuOptions.Locked == "ON" then
+		TrinketMenu_OptLocked:SetChecked(true)
+	else
+		TrinketMenu_OptLocked:SetChecked(false)
+	end
 	local normalTexture = TrinketMenu_LockButton:GetNormalTexture()
 	local pushedTexture = TrinketMenu_LockButton:GetPushedTexture()
 	if c == 0 then
