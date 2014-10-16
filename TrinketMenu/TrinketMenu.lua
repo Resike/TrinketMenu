@@ -188,9 +188,9 @@ function TrinketMenu.BuildMenu()
 			icon = _G["TrinketMenu_Menu"..i.."Icon"]
 			icon:SetTexture(TrinketMenu.BaggedTrinkets[i].texture)
 			if TrinketMenuPerOptions.Hidden[TrinketMenu.BaggedTrinkets[i].id] then
-				icon:SetDesaturated(1)
+				icon:SetDesaturated(true)
 			else
-				icon:SetDesaturated(0)
+				icon:SetDesaturated(false)
 			end
 			item:SetPoint("TOPLEFT", "TrinketMenu_MenuFrame", TrinketMenuPerOptions.MenuDock, xpos, ypos)
 			if TrinketMenuPerOptions.MenuOrient == "VERTICAL" then
@@ -395,9 +395,9 @@ function TrinketMenu.UpdateWornTrinkets()
 	TrinketMenu_Trinket0Icon:SetTexture(texture)
 	texture, name = TrinketMenu.ItemInfo(14)
 	TrinketMenu_Trinket1Icon:SetTexture(texture)
-	TrinketMenu_Trinket0Icon:SetDesaturated(0)
+	TrinketMenu_Trinket0Icon:SetDesaturated(false)
 	TrinketMenu_Trinket0:SetChecked(0)
-	TrinketMenu_Trinket1Icon:SetDesaturated(0)
+	TrinketMenu_Trinket1Icon:SetDesaturated(false)
 	TrinketMenu_Trinket1:SetChecked(0)
 	TrinketMenu.UpdateWornCooldowns()
 	if TrinketMenu_MenuFrame:IsVisible() then
@@ -979,7 +979,7 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 					PickupContainerItem(b, s)
 					PickupInventoryItem(slot)
 				end
-				_G["TrinketMenu_Trinket"..(slot - 13).."Icon"]:SetDesaturated(1)
+				_G["TrinketMenu_Trinket"..(slot - 13).."Icon"]:SetDesaturated(true)
 				TrinketMenu.StartTimer("UpdateWornTrinkets") -- in case it's not equipped (stunned, etc)
 			end
 		end

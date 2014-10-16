@@ -331,7 +331,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 	local buff = GetItemSpell(id)
 	if buff then
 		if UnitAura("player",buff) or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-			icon:SetDesaturated(1)
+			icon:SetDesaturated(true)
 			return
 		end
 	end
@@ -343,12 +343,12 @@ function TrinketMenu.ProcessAutoQueue(which)
 		if TrinketMenuQueue.Stats[id].delay then
 			-- leave if currently equipped trinket is on cooldown for less than its delay
 			if start > 0 and (duration - timeLeft) > 30 and timeLeft < TrinketMenuQueue.Stats[id].delay then
-				icon:SetDesaturated(1)
+				icon:SetDesaturated(true)
 				return
 			end
 		end
 	end
-	icon:SetDesaturated(0) -- normal queue operation, reflect that in queue inset
+	icon:SetDesaturated(false) -- normal queue operation, reflect that in queue inset
 	icon:SetVertexColor(1, 1, 1)
 	local name
 	local ready = TrinketMenu.TrinketNearReady(id)
