@@ -83,7 +83,7 @@
 		<HighlightTexture alphaMode = "ADD" file = "Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
 	<Frame name = "TrinketMenu_OptFrame" parent = "UIParent" movable = "true" toplevel = "true" clampedToScreen = "true" hidden = "true">
-		<Size x = "300" y = "326"/>
+		<Size x = "300" y = "336"/>
 		<Anchors>
 			<Anchor point = "CENTER"/>
 		</Anchors>
@@ -312,6 +312,15 @@
 					<CheckButton name = "TrinketMenu_OptRedRange" inherits = "TrinketMenu_CheckButtonTemplate">
 						<Anchors>
 							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptStopOnSwap" relativePoint = "BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x = "0" y = "4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</CheckButton>
+					<CheckButton name = "TrinketMenu_OptHidePetBattle" inherits = "TrinketMenu_CheckButtonTemplate">
+						<Anchors>
+							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptRedRange" relativePoint = "BOTTOMLEFT">
 								<Offset>
 									<AbsDimension x = "0" y = "4"/>
 								</Offset>

@@ -23,6 +23,7 @@ TrinketMenu.CheckOptInfo = {
 	{"StopOnSwap", "OFF", "Stop Queue On Swap", "Swapping a passive trinket stops an auto queue.  Check this to also stop the auto queue when a clickable trinket is manually swapped in via TrinketMenu.  This will have the most use to those with frequent trinkets marked Priority."},
 	{"HideOnLoad", "OFF", "Close On Profile Load", "Check this to dismiss this window when you load a profile."},
 	{"RedRange", "OFF", "Red Out of Range", "Check this to red out worn trinkets that are out of range to a valid target.  ie, Gnomish Death Ray and Gnomish Net-O-Matic."},
+	{"HidePetBattle", "ON", "Hide in Pet Battles", "Check this auto hide the frame while in a pet battle."},
 	{"MenuOnRight", "OFF", "Menu On Right-Click", "Check this to prevent the menu from appearing until either worn trinket is right-clicked.\n\nNOTE: This setting CANNOT be changed while in combat."}
 }
 
@@ -60,7 +61,7 @@ function TrinketMenu.InitOptions()
 	if TrinketMenu.QueueInit then
 		TrinketMenu.QueueInit()
 		TrinketMenu_Tab1:Show()
-		TrinketMenu_OptFrame:SetHeight(326)
+		TrinketMenu_OptFrame:SetHeight(336)
 		TrinketMenu_SubOptFrame:SetPoint("TOPLEFT", TrinketMenu_OptFrame, "TOPLEFT", 8, - 50)
 	else
 		TrinketMenu_OptStopOnSwap:Hide() -- remove StopOnSwap option if queue not loaded

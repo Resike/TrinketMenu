@@ -35,6 +35,7 @@ function TrinketMenu.LoadDefaults()
 		ShowHotKeys = "OFF",		-- whether hotkeys show on trinkets
 		StopOnSwap = "OFF",			-- whether to stop auto queue on all manual swaps
 		RedRange = "OFF",			-- whether to monitor and red out out of range trinkets
+		HidePetBattle = "ON",		-- whether to hide the trinkets while in a pet battle
 		MenuOnRight = "OFF"			-- whether to open menu with right-click
 	}
 	TrinketMenuPerOptions = TrinketMenuPerOptions or {
@@ -254,6 +255,7 @@ function TrinketMenu.Initialize()
 	options.StopOnSwap = options.StopOnSwap or "OFF" -- 3.2
 	options.HideOnLoad = options.HideOnLoad or "OFF" -- 3.4
 	options.RedRange = options.RedRange or "OFF" -- 3.54
+	options.HidePetBattle = options.HidePetBattle or "ON" -- 6.0.3
 	TrinketMenuPerOptions.Alpha = TrinketMenuPerOptions.Alpha or 1 -- 3.5
 	TrinketMenuPerOptions.Hidden = TrinketMenuPerOptions.Hidden or { }
 	options.MenuOnRight = options.MenuOnRight or "OFF" -- 3.61
@@ -356,6 +358,7 @@ function TrinketMenu.OnLoad(self)
 	self:RegisterEvent("PLAYER_LOGIN")
 end
 
+local shown
 function TrinketMenu.OnEvent(self, event, ...)
 	if event == "UNIT_INVENTORY_CHANGED" then
 		local unitID = ...
@@ -364,6 +367,17 @@ function TrinketMenu.OnEvent(self, event, ...)
 		end
 	elseif event == "ACTIONBAR_UPDATE_COOLDOWN" then
 		TrinketMenu.UpdateWornCooldowns(1)
+	elseif event == "PET_BATTLE_OPENING_START" then
+		if TrinketMenuOptions.HidePetBattle == "ON" then
+			shown = TrinketMenu_MainFrame:IsShown()
+			if shown then
+				TrinketMenu_MainFrame:Hide()
+			end
+		end
+	elseif event == "PET_BATTLE_CLOSE" then
+		if TrinketMenuOptions.HidePetBattle == "ON" and shown then
+			TrinketMenu_MainFrame:Show()
+		end
 	elseif (event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_UNGHOST" or event == "PLAYER_ALIVE") and not TrinketMenu.IsPlayerReallyDead() then
 		if TrinketMenu.CombatQueue[0] or TrinketMenu.CombatQueue[1] then
 			TrinketMenu.EquipTrinketByName(TrinketMenu.CombatQueue[0], 13)
@@ -387,6 +401,8 @@ function TrinketMenu.OnEvent(self, event, ...)
 		self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 		self:RegisterEvent("UPDATE_BINDINGS")
 		self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+		self:RegisterEvent("PET_BATTLE_OPENING_START")
+		self:RegisterEvent("PET_BATTLE_CLOSE")
 	end
 end
 
@@ -725,9 +741,9 @@ end
 
 function TrinketMenu.UpdateWornCooldowns(maybeGlobal)
 	local start, duration, enable = GetInventoryItemCooldown("player", 13)
-	CooldownFrame_SetTimer(TrinketMenu_Trinket0Cooldown, start, duration, enable)
+	CooldownFrame_Set(TrinketMenu_Trinket0Cooldown, start, duration, enable)
 	start, duration, enable = GetInventoryItemCooldown("player", 14)
-	CooldownFrame_SetTimer(TrinketMenu_Trinket1Cooldown, start, duration, enable)
+	CooldownFrame_Set(TrinketMenu_Trinket1Cooldown, start, duration, enable)
 	if not maybeGlobal then
 		TrinketMenu.WriteWornCooldowns()
 	end
@@ -737,7 +753,7 @@ function TrinketMenu.UpdateMenuCooldowns()
 	local start,duration,enable
 	for i = 1, TrinketMenu.NumberOfTrinkets do
 		start,duration,enable = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
-		CooldownFrame_SetTimer(_G["TrinketMenu_Menu"..i.."Cooldown"], start, duration, enable)
+		CooldownFrame_Set(_G["TrinketMenu_Menu"..i.."Cooldown"], start, duration, enable)
 	end
 	TrinketMenu.WriteMenuCooldowns()
 end

@@ -1,6 +1,6 @@
-﻿## Interface: 60000
-## Title: TrinketMenu |cFF99CC01rev|r |cFFFF00006.0.1|r
-## Version: 6.0.1
+## Interface: 70000
+## Title: TrinketMenu |cFF99CC01rev|r |cFFFF00007.0.0|r
+## Version: 7.0.0
 ## Author: Gello, Resike
 ## Notes: Addon to manage trinkets.
 ## SavedVariables: TrinketMenuOptions
