@@ -123,21 +123,21 @@ function TrinketMenu.DragMinimapButton()
 	TrinketMenu.MoveMinimapButton()
 end
 
-function TrinketMenu.MinimapButton_OnClick()
+function TrinketMenu.MinimapButton_OnClick(button)
 	PlaySound(825)
 	if IsShiftKeyDown() then
 		TrinketMenuOptions.Locked = TrinketMenuOptions.Locked == "ON" and "OFF" or "ON"
 		TrinketMenu.ReflectLock()
 	elseif IsAltKeyDown() and TrinketMenu.QueueInit then
-		if arg1 == "LeftButton" then
+		if button == "LeftButton" then
 			TrinketMenuQueue.Enabled[0] = not TrinketMenuQueue.Enabled[0] and 1 or nil
-		elseif arg1 == "RightButton" then
+		elseif button == "RightButton" then
 			TrinketMenuQueue.Enabled[1] = not TrinketMenuQueue.Enabled[1] and 1 or nil
 		end
 		TrinketMenu.ReflectQueueEnabled()
 		TrinketMenu.UpdateCombatQueue()
 	else
-		if arg1 == "LeftButton" and TrinketMenuOptions.DisableToggle == "OFF" then
+		if button == "LeftButton" and TrinketMenuOptions.DisableToggle == "OFF" then
 			TrinketMenu.ToggleFrame(TrinketMenu_MainFrame)
 		else
 			TrinketMenu.ToggleFrame(TrinketMenu_OptFrame)
