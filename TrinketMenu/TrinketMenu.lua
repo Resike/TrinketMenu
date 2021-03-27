@@ -334,7 +334,7 @@ end
 
 -- returns true if the player is really dead or ghost, not merely FD
 function TrinketMenu.IsPlayerReallyDead()
-	return UnitIsDeadOrGhost("player") and not UnitIsFeignDeath("player")
+	return IsClassic and (UnitIsDeadOrGhost("player") and not UnitIsFeignDeath("player")) or UnitIsDeadOrGhost("player")
 end
 
 function TrinketMenu.ItemInfo(slot)
