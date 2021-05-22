@@ -2,7 +2,7 @@
 
 local _G, type, string, tonumber, table, pairs, select = _G, type, string, tonumber, table, pairs, select
 
-local IsClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 
 TrinketMenu.PausedQueue = { } -- 0 or 1 whether queue is paused
 
@@ -304,6 +304,11 @@ end
 
 -- this function quickly checks if conditions are right for a possible ProcessAutoQueue
 function TrinketMenu.PeriodicQueueCheck()
+	if not TrinketMenuQueue.Enabled[0] and not TrinketMenuQueue.Enabled[1] then
+		TrinketMenu.StopTimer("QueueUpdate")
+		return
+	end
+	TrinketMenu.StartTimer("QueueUpdate")
 	for i = 0, 1 do
 		if TrinketMenuQueue.Enabled[i] then
 			TrinketMenu.ProcessAutoQueue(i)
