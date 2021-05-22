@@ -139,6 +139,10 @@ function TrinketMenu.OrientWindows()
 	end
 end
 
+function TrinketMenu.ScaleFrame(scale)
+	TrinketMenu.FrameToScale:SetScale(scale)
+end
+
 -- scan inventory and build MenuFrame
 function TrinketMenu.BuildMenu()
 	if not IsShiftKeyDown() and TrinketMenuOptions.MenuOnShift == "ON" then
