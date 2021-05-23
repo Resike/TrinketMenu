@@ -343,9 +343,19 @@ function TrinketMenu.ProcessAutoQueue(which)
 		buffName = GetItemSpell(id)
 	end
 	if buffName then
-		if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-			icon:SetDesaturated(true)
-			return
+		if IsClassic then
+			for i = 1, 32 do
+				local buff = UnitAura("player", i, "HELPFUL")
+				if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
+					icon:SetDesaturated(true)
+					return
+				end
+			end
+		else
+			if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
+				icon:SetDesaturated(true)
+				return
+			end
 		end
 	end
 	if TrinketMenuQueue.Stats[id] then
