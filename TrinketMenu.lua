@@ -1,4 +1,4 @@
-﻿--[[ TrinketMenu 9.0.4 ]]--
+﻿--[[ TrinketMenu 9.0.5 ]]--
 
 TrinketMenu = { }
 
