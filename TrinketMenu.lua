@@ -153,10 +153,10 @@ function TrinketMenu.BuildMenu()
 	local _, itemLink, itemID, itemName, equipSlot, itemTexture
 	-- go through bags and gather trinkets into .BaggedTrinkets
 	for i = 0, 4 do
-		for j = 1, GetContainerNumSlots(i) do
-			itemLink = GetContainerItemLink(i, j)
+		for j = 1, C_Container.GetContainerNumSlots(i) do
+			itemLink = C_Container.GetContainerItemLink(i, j)
 			if itemLink then
-				_, _, itemID, itemName = string.find(GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
+				_, _, itemID, itemName = string.find(C_Container.GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = GetItemInfo(itemID or "")
 				if equipSlot == "INVTYPE_TRINKET" and (IsAltKeyDown() or not TrinketMenuPerOptions.Hidden[itemID]) then
 					if not TrinketMenu.BaggedTrinkets[idx] then
@@ -370,8 +370,8 @@ function TrinketMenu.FindItem(name, includeInventory)
 		end
 	end
 	for i = 0, 4 do
-		for j = 1, GetContainerNumSlots(i) do
-			if string.find(GetContainerItemLink(i, j) or "", name, 1, 1) then
+		for j = 1, C_Container.GetContainerNumSlots(i) do
+			if string.find(C_Container.GetContainerItemLink(i, j) or "", name, 1, 1) then
 				return nil, i, j
 			end
 		end
@@ -685,9 +685,9 @@ function TrinketMenu.MenuTrinket_OnClick(self)
 	local bag, slot = TrinketMenu.BaggedTrinkets[self:GetID()].bag
 	local slot = TrinketMenu.BaggedTrinkets[self:GetID()].slot
 	if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
-		ChatFrame1EditBox:Insert(GetContainerItemLink(bag, slot))
+		ChatFrame1EditBox:Insert(C_Container.GetContainerItemLink(bag, slot))
 	elseif IsAltKeyDown() then
-		local _, _, itemID = string.find(GetContainerItemLink(bag, slot) or "", "item:(%d+)")
+		local _, _, itemID = string.find(C_Container.GetContainerItemLink(bag, slot) or "", "item:(%d+)")
 		if TrinketMenuPerOptions.Hidden[itemID] then
 			TrinketMenuPerOptions.Hidden[itemID] = nil
 		else
@@ -964,7 +964,7 @@ end
 
 -- returns 1 if the item at bag(,slot) is an engineered trinket
 function TrinketMenu.IsEngineered(bag, slot)
-	local item = slot and GetContainerItemLink(bag, slot) or GetInventoryItemLink("player", bag)
+	local item = slot and C_Container.GetContainerItemLink(bag, slot) or GetInventoryItemLink("player", bag)
 	if item then
 		local _, _, _, _, _, itemType, itemSubtype, _, itemLoc = GetItemInfo(item)
 		if itemType == TrinketMenu.TRADE_GOODS and itemSubtype == TrinketMenu.DEVICES and itemLoc == "INVTYPE_TRINKET" then
@@ -986,8 +986,8 @@ function TrinketMenu.FindSpace(engineering)
 	for i = 4, 0, -1 do
 		bagType = (select(7, GetItemInfo(GetInventoryItemLink("player", 19 + i) or "")))
 		if (engineering and bagType == TrinketMenu.ENGINEERING_BAG) or (not engineering and bagType == TrinketMenu.BAG) then
-			for j = 1, GetContainerNumSlots(i) do
-				if not GetContainerItemLink(i, j) then
+			for j = 1, C_Container.GetContainerNumSlots(i) do
+				if not C_Container.GetContainerItemLink(i, j) then
 					return i, j
 				end
 			end
