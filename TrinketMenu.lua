@@ -1102,7 +1102,7 @@ end
 function TrinketMenu.CooldownUpdate()
 	local inv, bag, slot, start, duration, name, remain
 	for i in pairs(TrinketMenuPerOptions.ItemsUsed) do
-		start, duration = GetItemCooldown(i)
+		start, duration = C_Container.GetItemCooldown(i)
 		if start and TrinketMenuPerOptions.ItemsUsed[i] < 3 then
 			TrinketMenuPerOptions.ItemsUsed[i] = TrinketMenuPerOptions.ItemsUsed[i] + 1 -- count for 3 seconds before seeing if this is a real cooldown
 		elseif start then

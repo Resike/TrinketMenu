@@ -291,7 +291,7 @@ end
 --[[ Auto queue processing ]]
 
 function TrinketMenu.TrinketNearReady(id)
-	local start, duration = GetItemCooldown(id)
+	local start, duration = C_Container.GetItemCooldown(id)
 	if start == 0 or duration - (GetTime() - start) <= 30 then
 		return 1
 	end
