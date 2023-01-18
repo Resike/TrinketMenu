@@ -47,7 +47,7 @@ end
 function TrinketMenu.GetID(bag, slot)
 	local _, id
 	if slot then
-		_, _, id = string.find(GetContainerItemLink(bag, slot) or "", "item:(%d+)")
+		_, _, id = string.find(TrinketMenu.GetContainerItemLink(bag, slot) or "", "item:(%d+)")
 	else
 		_, _, id = string.find(GetInventoryItemLink("player", bag) or "", "item:(%d+)")
 	end
@@ -84,7 +84,7 @@ function TrinketMenu.PopulateSort(which)
 	TrinketMenu.AddToSort(which,TrinketMenu.GetID((1 - which) + 13))
 	local _, equipLoc, id
 	for i = 0, 4 do
-		for j = 1, GetContainerNumSlots(i) do
+		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 			id = TrinketMenu.GetID(i, j)
 			_, _, _, _, _, _, _, _, equipLoc = GetItemInfo(id or "")
 			if equipLoc=="INVTYPE_TRINKET" then
@@ -291,7 +291,7 @@ end
 --[[ Auto queue processing ]]
 
 function TrinketMenu.TrinketNearReady(id)
-	local start, duration = GetItemCooldown(id)
+	local start, duration = TrinketMenu.GetItemCooldown(id)
 	if start == 0 or duration - (GetTime() - start) <= 30 then
 		return 1
 	end

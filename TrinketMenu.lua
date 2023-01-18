@@ -5,8 +5,9 @@ TrinketMenu = { }
 local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
 local Masque = LibStub("Masque", true)
 
-local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
+local IsClassic = (WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC and WOW_PROJECT_ID < WOW_PROJECT_WRATH_CLASSIC)
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local IsWrathClassic = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 -- localized strings required to support engineering bags
@@ -144,6 +145,29 @@ function TrinketMenu.ScaleFrame(scale)
 	TrinketMenu.FrameToScale:SetScale(scale)
 end
 
+function TrinketMenu.GetContainerNumSlots(bagID)
+	if (IsClassic or IsVanillaClassic)
+	then return GetContainerNumSlots(bagID)
+	else return C_Container.GetContainerNumSlots(bagID)
+	end
+end
+
+function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
+	if (IsClassic or IsVanillaClassic)
+	then return GetContainerItemLink(bagID, slotIndex)
+	else return C_Container.GetContainerItemLink(bagID, slotIndex)
+	end
+end
+
+function TrinketMenu.GetItemCooldown(itemID)
+	if (IsClassic or IsVanillaClassic)
+	then return GetItemCooldown(itemID)
+	else return C_Container.GetItemCooldown(itemID)
+	end
+end
+
+
+
 -- scan inventory and build MenuFrame
 function TrinketMenu.BuildMenu()
 	if not IsShiftKeyDown() and TrinketMenuOptions.MenuOnShift == "ON" then
@@ -153,10 +177,10 @@ function TrinketMenu.BuildMenu()
 	local _, itemLink, itemID, itemName, equipSlot, itemTexture
 	-- go through bags and gather trinkets into .BaggedTrinkets
 	for i = 0, 4 do
-		for j = 1, GetContainerNumSlots(i) do
-			itemLink = GetContainerItemLink(i, j)
+		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
+			itemLink = TrinketMenu.GetContainerItemLink(i, j)
 			if itemLink then
-				_, _, itemID, itemName = string.find(GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
+				_, _, itemID, itemName = string.find(TrinketMenu.GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = GetItemInfo(itemID or "")
 				if equipSlot == "INVTYPE_TRINKET" and (IsAltKeyDown() or not TrinketMenuPerOptions.Hidden[itemID]) then
 					if not TrinketMenu.BaggedTrinkets[idx] then
@@ -370,8 +394,8 @@ function TrinketMenu.FindItem(name, includeInventory)
 		end
 	end
 	for i = 0, 4 do
-		for j = 1, GetContainerNumSlots(i) do
-			if string.find(GetContainerItemLink(i, j) or "", name, 1, 1) then
+		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
+			if string.find(TrinketMenu.GetContainerItemLink(i, j) or "", name, 1, 1) then
 				return nil, i, j
 			end
 		end
@@ -685,9 +709,9 @@ function TrinketMenu.MenuTrinket_OnClick(self)
 	local bag, slot = TrinketMenu.BaggedTrinkets[self:GetID()].bag
 	local slot = TrinketMenu.BaggedTrinkets[self:GetID()].slot
 	if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
-		ChatFrame1EditBox:Insert(GetContainerItemLink(bag, slot))
+		ChatFrame1EditBox:Insert(TrinketMenu.GetContainerItemLink(bag, slot))
 	elseif IsAltKeyDown() then
-		local _, _, itemID = string.find(GetContainerItemLink(bag, slot) or "", "item:(%d+)")
+		local _, _, itemID = string.find(TrinketMenu.GetContainerItemLink(bag, slot) or "", "item:(%d+)")
 		if TrinketMenuPerOptions.Hidden[itemID] then
 			TrinketMenuPerOptions.Hidden[itemID] = nil
 		else
@@ -964,7 +988,7 @@ end
 
 -- returns 1 if the item at bag(,slot) is an engineered trinket
 function TrinketMenu.IsEngineered(bag, slot)
-	local item = slot and GetContainerItemLink(bag, slot) or GetInventoryItemLink("player", bag)
+	local item = slot and TrinketMenu.GetContainerItemLink(bag, slot) or GetInventoryItemLink("player", bag)
 	if item then
 		local _, _, _, _, _, itemType, itemSubtype, _, itemLoc = GetItemInfo(item)
 		if itemType == TrinketMenu.TRADE_GOODS and itemSubtype == TrinketMenu.DEVICES and itemLoc == "INVTYPE_TRINKET" then
@@ -986,8 +1010,8 @@ function TrinketMenu.FindSpace(engineering)
 	for i = 4, 0, -1 do
 		bagType = (select(7, GetItemInfo(GetInventoryItemLink("player", 19 + i) or "")))
 		if (engineering and bagType == TrinketMenu.ENGINEERING_BAG) or (not engineering and bagType == TrinketMenu.BAG) then
-			for j = 1, GetContainerNumSlots(i) do
-				if not GetContainerItemLink(i, j) then
+			for j = 1, TrinketMenu.GetContainerNumSlots(i) do
+				if not TrinketMenu.GetContainerItemLink(i, j) then
 					return i, j
 				end
 			end
@@ -1102,7 +1126,7 @@ end
 function TrinketMenu.CooldownUpdate()
 	local inv, bag, slot, start, duration, name, remain
 	for i in pairs(TrinketMenuPerOptions.ItemsUsed) do
-		start, duration = GetItemCooldown(i)
+		start, duration = TrinketMenu.GetItemCooldown(i)
 		if start and TrinketMenuPerOptions.ItemsUsed[i] < 3 then
 			TrinketMenuPerOptions.ItemsUsed[i] = TrinketMenuPerOptions.ItemsUsed[i] + 1 -- count for 3 seconds before seeing if this is a real cooldown
 		elseif start then
