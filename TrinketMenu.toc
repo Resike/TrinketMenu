@@ -1,4 +1,4 @@
-## Interface: 30401
+## Interface: 100002
 ## Title: TrinketMenu 10.0.0
 ## Version: 10.0.0
 ## Author: Gello, Resike
