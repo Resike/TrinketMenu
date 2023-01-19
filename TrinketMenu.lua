@@ -5,9 +5,8 @@ TrinketMenu = { }
 local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
 local Masque = LibStub("Masque", true)
 
-local IsClassic = (WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC and WOW_PROJECT_ID < WOW_PROJECT_WRATH_CLASSIC)
+local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-local IsWrathClassic = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 -- localized strings required to support engineering bags
@@ -80,16 +79,29 @@ TrinketMenu.Corners = {"TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT"}
 -- x/yoff   = offset MenuFrame is positioned to MainFrame
 -- x/ydir   = direction trinkets are added to menu
 -- x/ystart = starting offset when building a menu, relativePoint MenuDock
-TrinketMenu.DockStats = {
-	["TOPRIGHTTOPLEFT"] =			{ xoff = - 4, yoff = 0, xdir = 1, ydir = - 1, xstart = 8, ystart = - 8 },
-	["BOTTOMRIGHTBOTTOMLEFT"] = 	{ xoff = - 4, yoff = 0, xdir = 1, ydir = 1, xstart = 8, ystart = 44 },
-	["TOPLEFTTOPRIGHT"] =			{ xoff = 4, yoff = 0, xdir = - 1, ydir = - 1, xstart = - 44, ystart = - 8 },
-	["BOTTOMLEFTBOTTOMRIGHT"] =		{ xoff = 4, yoff = 0, xdir = - 1, ydir = 1, xstart = - 44, ystart = 44 },
-	["TOPRIGHTBOTTOMRIGHT"] =		{ xoff = 0, yoff = - 4, xdir = - 1, ydir = 1, xstart = - 44, ystart = 44 },
-	["BOTTOMRIGHTTOPRIGHT"] =		{ xoff = 0, yoff = 4, xdir = - 1, ydir = - 1, xstart = - 44, ystart = - 8 },
-	["TOPLEFTBOTTOMLEFT"] =			{ xoff = 0, yoff = - 4, xdir = 1, ydir = 1, xstart = 8, ystart = 44 },
-	["BOTTOMLEFTTOPLEFT"] =			{ xoff = 0, yoff = 4, xdir = 1, ydir = - 1, xstart = 8, ystart = - 8 }
-}
+if IsRetail then
+	TrinketMenu.DockStats = {
+		["TOPRIGHTTOPLEFT"] =			{ xoff = -7, yoff = 0, xdir = 1, ydir = - 1, xstart = 4, ystart = -4 },
+		["BOTTOMRIGHTBOTTOMLEFT"] = 	{ xoff = -7, yoff = 0, xdir = 1, ydir = 1, xstart = 4, ystart = 48 },
+		["TOPLEFTTOPRIGHT"] =			{ xoff = 7, yoff = 0, xdir = - 1, ydir = -1, xstart = -48, ystart = -4 },
+		["BOTTOMLEFTBOTTOMRIGHT"] =		{ xoff = 7, yoff = 0, xdir = - 1, ydir = 1, xstart = -48, ystart = 48 },
+		["TOPRIGHTBOTTOMRIGHT"] =		{ xoff = 0, yoff = -7, xdir = -1, ydir = 1, xstart = -48, ystart = 48 },
+		["BOTTOMRIGHTTOPRIGHT"] =		{ xoff = 0, yoff = 7, xdir = - 1, ydir = -1, xstart = -48, ystart = -4 },
+		["TOPLEFTBOTTOMLEFT"] =			{ xoff = 0, yoff = -7, xdir = 1, ydir = 1, xstart = 4, ystart = 48 },
+		["BOTTOMLEFTTOPLEFT"] =			{ xoff = 0, yoff = 7, xdir = 1, ydir = - 1, xstart = 4, ystart = -4 }
+	}
+else
+	TrinketMenu.DockStats = {
+		["TOPRIGHTTOPLEFT"] =			{ xoff = -12, yoff = 0, xdir = 1, ydir = - 1, xstart = 8, ystart = -8 },
+		["BOTTOMRIGHTBOTTOMLEFT"] = 	{ xoff = -12, yoff = 0, xdir = 1, ydir = 1, xstart = 8, ystart = 44 },
+		["TOPLEFTTOPRIGHT"] =			{ xoff = 12, yoff = 0, xdir = -1, ydir = -1, xstart = -44, ystart = -8 },
+		["BOTTOMLEFTBOTTOMRIGHT"] =		{ xoff = 12, yoff = 0, xdir = -1, ydir = 1, xstart = -44, ystart = 44 },
+		["TOPRIGHTBOTTOMRIGHT"] =		{ xoff = 0, yoff = -12, xdir = -1, ydir = 1, xstart = -44, ystart = 44 },
+		["BOTTOMRIGHTTOPRIGHT"] =		{ xoff = 0, yoff = 12, xdir = -1, ydir = -1, xstart = -44, ystart = -8 },
+		["TOPLEFTBOTTOMLEFT"] =			{ xoff = 0, yoff = -12, xdir = 1, ydir = 1, xstart = 8, ystart = 44 },
+		["BOTTOMLEFTTOPLEFT"] =			{ xoff = 0, yoff = 12, xdir = 1, ydir = - 1, xstart = 8, ystart = -8 }
+	}
+end
 
 -- returns offset and direction depending on current docking. ie: TrinketMenu.DockInfo("xoff")
 function TrinketMenu.DockInfo(arg1)
@@ -122,7 +134,7 @@ function TrinketMenu.DockWindows()
 		if TrinketMenuOptions.Locked == "OFF" then
 			TrinketMenu_MenuFrame:SetPoint(TrinketMenuPerOptions.MenuDock, "TrinketMenu_MainFrame", TrinketMenuPerOptions.MainDock, TrinketMenu.DockInfo("xoff"), TrinketMenu.DockInfo("yoff"))
 		else
-			TrinketMenu_MenuFrame:SetPoint(TrinketMenuPerOptions.MenuDock, "TrinketMenu_MainFrame", TrinketMenuPerOptions.MainDock, TrinketMenu.DockInfo("xoff") * 3, TrinketMenu.DockInfo("yoff") * 3)
+			TrinketMenu_MenuFrame:SetPoint(TrinketMenuPerOptions.MenuDock, "TrinketMenu_MainFrame", TrinketMenuPerOptions.MainDock, TrinketMenu.DockInfo("xoff"), TrinketMenu.DockInfo("yoff"))
 		end
 	end
 	if TrinketMenu_MenuFrame:IsVisible() then
@@ -133,11 +145,21 @@ end
 -- displays windows vertically or horizontally
 function TrinketMenu.OrientWindows()
 	if TrinketMenuPerOptions.MainOrient == "HORIZONTAL" then
-		TrinketMenu_MainFrame:SetWidth(92)
-		TrinketMenu_MainFrame:SetHeight(52)
+		if IsRetail then
+			TrinketMenu_MainFrame:SetWidth(97)
+			TrinketMenu_MainFrame:SetHeight(52)
+		else
+			TrinketMenu_MainFrame:SetWidth(92)
+			TrinketMenu_MainFrame:SetHeight(52)
+		end
 	else
-		TrinketMenu_MainFrame:SetWidth(52)
-		TrinketMenu_MainFrame:SetHeight(92)
+		if IsRetail then
+			TrinketMenu_MainFrame:SetWidth(52)
+			TrinketMenu_MainFrame:SetHeight(97)
+		else
+			TrinketMenu_MainFrame:SetWidth(52)
+			TrinketMenu_MainFrame:SetHeight(92)
+		end
 	end
 end
 
@@ -146,34 +168,59 @@ function TrinketMenu.ScaleFrame(scale)
 end
 
 function TrinketMenu.GetContainerNumSlots(bagID)
-	if (IsClassic or IsVanillaClassic)
-	then return GetContainerNumSlots(bagID)
-	else return C_Container.GetContainerNumSlots(bagID)
+	if IsVanillaClassic then
+		return GetContainerNumSlots(bagID)
+	else
+		return C_Container.GetContainerNumSlots(bagID)
+	end
+end
+
+function TrinketMenu.GetContainerItemCooldown(bagID, slotIndex)
+	if IsVanillaClassic then
+		return GetContainerItemCooldown(bagID, slotIndex)
+	else
+		return C_Container.GetContainerItemCooldown(bagID, slotIndex)
+	end
+end
+
+function TrinketMenu.GetContainerItemInfo(bagID, slotIndex)
+	if IsVanillaClassic then
+		return GetContainerItemInfo(bagID, slotIndex)
+	else
+		return C_Container.GetContainerItemInfo(bagID, slotIndex)
 	end
 end
 
 function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
-	if (IsClassic or IsVanillaClassic)
-	then return GetContainerItemLink(bagID, slotIndex)
-	else return C_Container.GetContainerItemLink(bagID, slotIndex)
+	if IsVanillaClassic then
+		return GetContainerItemLink(bagID, slotIndex)
+	else
+		return C_Container.GetContainerItemLink(bagID, slotIndex)
+	end
+end
+
+function TrinketMenu.PickupContainerItem(bagID, slotIndex)
+	if IsVanillaClassic then
+		return PickupContainerItem(bagID, slotIndex)
+	else
+		return C_Container.PickupContainerItem(bagID, slotIndex)
 	end
 end
 
 function TrinketMenu.GetItemCooldown(itemID)
-	if (IsClassic or IsVanillaClassic)
-	then return GetItemCooldown(itemID)
-	else return C_Container.GetItemCooldown(itemID)
+	if IsVanillaClassic then
+		return GetItemCooldown(itemID)
+	else
+		return C_Container.GetItemCooldown(itemID)
 	end
 end
-
-
 
 -- scan inventory and build MenuFrame
 function TrinketMenu.BuildMenu()
 	if not IsShiftKeyDown() and TrinketMenuOptions.MenuOnShift == "ON" then
 		return
 	end
-	local idx, i, j, k, texture = 1
+	local idx = 1
 	local _, itemLink, itemID, itemName, equipSlot, itemTexture
 	-- go through bags and gather trinkets into .BaggedTrinkets
 	for i = 0, 4 do
@@ -228,22 +275,22 @@ function TrinketMenu.BuildMenu()
 			end
 			item:SetPoint("TOPLEFT", "TrinketMenu_MenuFrame", TrinketMenuPerOptions.MenuDock, xpos, ypos)
 			if TrinketMenuPerOptions.MenuOrient == "VERTICAL" then
-				xpos = xpos + TrinketMenu.DockInfo("xdir") * 40
+				xpos = xpos + TrinketMenu.DockInfo("xdir") * (IsRetail and 45 or 40)
 				col = col + 1
 				if col == max_cols then
 					xpos = TrinketMenu.DockInfo("xstart")
 					col = 0
-					ypos = ypos + TrinketMenu.DockInfo("ydir") * 40
+					ypos = ypos + TrinketMenu.DockInfo("ydir") * (IsRetail and 45 or 40)
 					row = row + 1
 				end
 				item:Show()
 			else
-				ypos = ypos + TrinketMenu.DockInfo("ydir") * 40
+				ypos = ypos + TrinketMenu.DockInfo("ydir") * (IsRetail and 45 or 40)
 				col = col + 1
 				if col == max_cols then
 					ypos = TrinketMenu.DockInfo("ystart")
 					col = 0
-					xpos = xpos + TrinketMenu.DockInfo("xdir") * 40
+					xpos = xpos + TrinketMenu.DockInfo("xdir") * (IsRetail and 45 or 40)
 					row = row + 1
 				end
 				item:Show()
@@ -256,11 +303,11 @@ function TrinketMenu.BuildMenu()
 			row = row - 1
 		end
 		if TrinketMenuPerOptions.MenuOrient == "VERTICAL" then
-			TrinketMenu_MenuFrame:SetWidth(12 + (max_cols * 40))
-			TrinketMenu_MenuFrame:SetHeight(12 + ((row + 1) * 40))
+			TrinketMenu_MenuFrame:SetWidth((IsRetail and 7 or 12) + (max_cols * (IsRetail and 45 or 40)))
+			TrinketMenu_MenuFrame:SetHeight((IsRetail and 7 or 12) + ((row + 1) * (IsRetail and 45 or 40)))
 		else
-			TrinketMenu_MenuFrame:SetWidth(12 + ((row + 1) * 40))
-			TrinketMenu_MenuFrame:SetHeight(12 + (max_cols * 40))
+			TrinketMenu_MenuFrame:SetWidth((IsRetail and 7 or 12) + ((row + 1) * (IsRetail and 45 or 40)))
+			TrinketMenu_MenuFrame:SetHeight((IsRetail and 7 or 12) + (max_cols * (IsRetail and 45 or 40)))
 		end
 		TrinketMenu.UpdateMenuCooldowns()
 		TrinketMenu_MenuFrame:Show()
@@ -721,7 +768,7 @@ function TrinketMenu.MenuTrinket_OnClick(self)
 	else
 		local slot = (arg1 == "LeftButton") and 13 or 14
 		if TrinketMenu.QueueInit then
-			local _, _, canCooldown = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot)
+			local _, _, canCooldown = TrinketMenu.GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot)
 			if canCooldown == 0 or TrinketMenuOptions.StopOnSwap == "ON" then -- if incoming trinket can't go on cooldown
 				TrinketMenuQueue.Enabled[slot - 13] = nil -- turn off autoqueue
 				TrinketMenu.ReflectQueueEnabled()
@@ -828,7 +875,7 @@ end
 function TrinketMenu.UpdateMenuCooldowns()
 	local start,duration,enable
 	for i = 1, TrinketMenu.NumberOfTrinkets do
-		start,duration,enable = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
+		start,duration,enable = TrinketMenu.GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
 		CooldownFrame_Set(_G["TrinketMenu_Menu"..i.."Cooldown"], start, duration, enable)
 	end
 	TrinketMenu.WriteMenuCooldowns()
@@ -916,7 +963,7 @@ function TrinketMenu.TooltipUpdate()
 		TrinketMenu.AnchorTooltip(TrinketMenu.TooltipOwner)
 		if TrinketMenu.TooltipType == "BAG" then
 			GameTooltip:SetBagItem(TrinketMenu.TooltipBag, TrinketMenu.TooltipSlot)
-			cooldown = GetContainerItemCooldown(TrinketMenu.TooltipBag, TrinketMenu.TooltipSlot)
+			cooldown = TrinketMenu.GetContainerItemCooldown(TrinketMenu.TooltipBag, TrinketMenu.TooltipSlot)
 		else
 			GameTooltip:SetInventoryItem("player", TrinketMenu.TooltipSlot)
 			cooldown = GetInventoryItemCooldown("player", TrinketMenu.TooltipSlot)
@@ -1038,7 +1085,7 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 	elseif not CursorHasItem() and not SpellIsTargeting() then
 		local _, b, s = TrinketMenu.FindItem(name)
 		if b then
-			local _, _, isLocked = GetContainerItemInfo(b, s)
+			local _, _, isLocked = TrinketMenu.GetContainerItemInfo(b, s)
 			if not isLocked and not IsInventoryItemLocked(slot) then
 				-- neither container item nor inventory item locked, perform swap
 				local directSwap = true -- assume a direct swap will happen
@@ -1049,8 +1096,8 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 						local freeBag,freeSlot = TrinketMenu.FindSpace()
 						if freeBag then
 							PickupInventoryItem(slot)
-							PickupContainerItem(freeBag, freeSlot)
-							PickupContainerItem(b, s)
+							TrinketMenu.PickupContainerItem(freeBag, freeSlot)
+							TrinketMenu.PickupContainerItem(b, s)
 							EquipCursorItem(slot)
 							directSwap = nil
 						end
@@ -1061,14 +1108,14 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 					if freeBag then
 						-- move outgoing trinket to engineering bag, equip incoming trinket
 						PickupInventoryItem(slot)
-						PickupContainerItem(freeBag, freeSlot)
-						PickupContainerItem(b, s)
+						TrinketMenu.PickupContainerItem(freeBag, freeSlot)
+						TrinketMenu.PickupContainerItem(b, s)
 						EquipCursorItem(slot)
 						directSwap = nil
 					end
 				end
 				if directSwap then
-					PickupContainerItem(b, s)
+					TrinketMenu.PickupContainerItem(b, s)
 					PickupInventoryItem(slot)
 				end
 				_G["TrinketMenu_Trinket"..(slot - 13).."Icon"]:SetDesaturated(true)
@@ -1088,7 +1135,7 @@ function TrinketMenu.UpdateCombatQueue()
 		if trinket then
 			_, bag, slot = TrinketMenu.FindItem(trinket)
 			if bag then
-				icon:SetTexture(GetContainerItemInfo(bag, slot))
+				icon:SetTexture(TrinketMenu.GetContainerItemInfo(bag, slot))
 				icon:Show()
 			end
 		elseif TrinketMenu.QueueInit and TrinketMenuQueue and TrinketMenuQueue.Enabled[which] then
@@ -1189,7 +1236,7 @@ end
 function TrinketMenu.WriteMenuCooldowns()
 	local start, duration
 	for i = 1, TrinketMenu.NumberOfTrinkets do
-		start, duration = GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
+		start, duration = TrinketMenu.GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[i].bag, TrinketMenu.BaggedTrinkets[i].slot)
 		TrinketMenu.WriteCooldown(_G["TrinketMenu_Menu"..i.."Time"], start, duration)
 	end
 end
