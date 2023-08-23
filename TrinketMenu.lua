@@ -168,51 +168,27 @@ function TrinketMenu.ScaleFrame(scale)
 end
 
 function TrinketMenu.GetContainerNumSlots(bagID)
-	if IsVanillaClassic then
-		return GetContainerNumSlots(bagID)
-	else
-		return C_Container.GetContainerNumSlots(bagID)
-	end
+	return C_Container.GetContainerNumSlots(bagID)
 end
 
 function TrinketMenu.GetContainerItemCooldown(bagID, slotIndex)
-	if IsVanillaClassic then
-		return GetContainerItemCooldown(bagID, slotIndex)
-	else
-		return C_Container.GetContainerItemCooldown(bagID, slotIndex)
-	end
+	return C_Container.GetContainerItemCooldown(bagID, slotIndex)
 end
 
 function TrinketMenu.GetContainerItemInfo(bagID, slotIndex)
-	if IsVanillaClassic then
-		return GetContainerItemInfo(bagID, slotIndex)
-	else
-		return C_Container.GetContainerItemInfo(bagID, slotIndex)
-	end
+	return C_Container.GetContainerItemInfo(bagID, slotIndex)
 end
 
 function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
-	if IsVanillaClassic then
-		return GetContainerItemLink(bagID, slotIndex)
-	else
-		return C_Container.GetContainerItemLink(bagID, slotIndex)
-	end
+	return C_Container.GetContainerItemLink(bagID, slotIndex)
 end
 
 function TrinketMenu.PickupContainerItem(bagID, slotIndex)
-	if IsVanillaClassic then
-		return PickupContainerItem(bagID, slotIndex)
-	else
-		return C_Container.PickupContainerItem(bagID, slotIndex)
-	end
+	return C_Container.PickupContainerItem(bagID, slotIndex)
 end
 
 function TrinketMenu.GetItemCooldown(itemID)
-	if IsVanillaClassic then
-		return GetItemCooldown(itemID)
-	else
-		return C_Container.GetItemCooldown(itemID)
-	end
+	return C_Container.GetItemCooldown(itemID)
 end
 
 -- scan inventory and build MenuFrame
@@ -417,7 +393,11 @@ end
 
 -- returns true if the player is really dead or ghost, not merely FD
 function TrinketMenu.IsPlayerReallyDead()
-	return IsVanillaClassic and (UnitIsDeadOrGhost("player") and not UnitIsFeignDeath("player")) or UnitIsDeadOrGhost("player")
+	if IsVanillaClassic then
+		return UnitIsDeadOrGhost("player") and not UnitIsFeignDeath("player")
+	else
+		return UnitIsDeadOrGhost("player")
+	end
 end
 
 function TrinketMenu.ItemInfo(slot)
@@ -1070,11 +1050,11 @@ end
 
 function TrinketMenu.EquipTrinketByName(name, slot)
 	if not name then return end
-	if UnitAffectingCombat("player") or TrinketMenu.IsPlayerReallyDead() then
+	if UnitAffectingCombat("player") or TrinketMenu.IsPlayerReallyDead() or (IsRetail and C_PetBattles.IsInBattle() or false) then
 		-- queue trinket
 		local queue = TrinketMenu.CombatQueue
 		local which = slot - 13 -- 0 or 1
-		if queue[which] == name and not imperative then
+		if queue[which] == name then
 			queue[which] = nil
 		elseif queue[1 - which] == name then
 			queue[1 - which] = nil
