@@ -415,14 +415,14 @@ end
 function TrinketMenu.FindItem(name, includeInventory)
 	if includeInventory then
 		for i = 13, 14 do
-			if string.find(GetInventoryItemLink("player", i) or "", name, 1, 1) then
+			if string.find(GetInventoryItemLink("player", i) or "", name, 1, true) then
 				return i
 			end
 		end
 	end
 	for i = 0, 4 do
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
-			if string.find(TrinketMenu.GetContainerItemLink(i, j) or "", name, 1, 1) then
+			if string.find(TrinketMenu.GetContainerItemLink(i, j) or "", name, 1, true) then
 				return nil, i, j
 			end
 		end
@@ -701,20 +701,19 @@ end
 
 --[[ OnClicks ]]
 
-function TrinketMenu.MainTrinket_OnClick(self)
-	local arg1 = GetMouseButtonClicked()
+function TrinketMenu.MainTrinket_OnClick(self, button, down)
 	self:SetChecked(false)
-	if arg1 == "RightButton" and TrinketMenuOptions.MenuOnRight == "ON" then
+	if button == "RightButton" and TrinketMenuOptions.MenuOnRight == "ON" then
 		if TrinketMenu_MenuFrame:IsVisible() then
 			TrinketMenu_MenuFrame:Hide()
 		else
 			TrinketMenu.BuildMenu()
 		end
-	elseif IsShiftKeyDown() then
+	elseif IsShiftKeyDown() and down then
 		if ChatFrame1EditBox:IsVisible() then
 			ChatFrame1EditBox:Insert(GetInventoryItemLink("player", self:GetID()))
 		end
-	elseif IsAltKeyDown() and TrinketMenu.QueueInit then
+	elseif IsAltKeyDown() and not down and TrinketMenu.QueueInit then
 		local which = self:GetID() - 13
 		if TrinketMenuQueue.Enabled[which] then
 			TrinketMenu.CombatQueue[self:GetID() - 13] = nil
@@ -730,15 +729,12 @@ function TrinketMenu.MainTrinket_OnClick(self)
 	end
 end
 
-function TrinketMenu.MenuTrinket_OnClick(self)
-	local arg1 = GetMouseButtonClicked()
+function TrinketMenu.MenuTrinket_OnClick(self, button, down)
 	self:SetChecked(false)
-	local bag, slot = TrinketMenu.BaggedTrinkets[self:GetID()].bag
-	local slot = TrinketMenu.BaggedTrinkets[self:GetID()].slot
 	if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
-		ChatFrame1EditBox:Insert(TrinketMenu.GetContainerItemLink(bag, slot))
+		ChatFrame1EditBox:Insert(TrinketMenu.GetContainerItemLink(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot))
 	elseif IsAltKeyDown() then
-		local _, _, itemID = string.find(TrinketMenu.GetContainerItemLink(bag, slot) or "", "item:(%d+)")
+		local _, _, itemID = string.find(TrinketMenu.GetContainerItemLink(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot) or "", "item:(%d+)")
 		if TrinketMenuPerOptions.Hidden[itemID] then
 			TrinketMenuPerOptions.Hidden[itemID] = nil
 		else
@@ -746,7 +742,7 @@ function TrinketMenu.MenuTrinket_OnClick(self)
 		end
 		TrinketMenu.BuildMenu()
 	else
-		local slot = (arg1 == "LeftButton") and 13 or 14
+		local slot = (button == "LeftButton") and 13 or 14
 		if TrinketMenu.QueueInit then
 			local _, _, canCooldown = TrinketMenu.GetContainerItemCooldown(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot)
 			if canCooldown == 0 or TrinketMenuOptions.StopOnSwap == "ON" then -- if incoming trinket can't go on cooldown
@@ -998,10 +994,10 @@ function TrinketMenu.ShrinkTooltip(owner)
 			line = _G["GameTooltipTextLeft"..i]
 			if line:IsVisible() then
 				line = line:GetText() or ""
-				if string.find(line,COOLDOWN_REMAINING) then
+				if string.find(line, COOLDOWN_REMAINING) then
 					cooldown = line
 				end
-				if string.find(line,TrinketMenu.ITEM_SPELL_CHARGES) then
+				if string.find(line, TrinketMenu.ITEM_SPELL_CHARGES) then
 					charge = line
 				end
 			end
@@ -1049,7 +1045,9 @@ end
 --[[ Combat Queue ]]
 
 function TrinketMenu.EquipTrinketByName(name, slot)
-	if not name then return end
+	if not name then
+		return
+	end
 	if UnitAffectingCombat("player") or TrinketMenu.IsPlayerReallyDead() or (IsRetail and C_PetBattles.IsInBattle() or false) then
 		-- queue trinket
 		local queue = TrinketMenu.CombatQueue
@@ -1065,8 +1063,7 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 	elseif not CursorHasItem() and not SpellIsTargeting() then
 		local _, b, s = TrinketMenu.FindItem(name)
 		if b then
-			local _, _, isLocked = TrinketMenu.GetContainerItemInfo(b, s)
-			if not isLocked and not IsInventoryItemLocked(slot) then
+			if not TrinketMenu.GetContainerItemInfo(b, s).isLocked and not IsInventoryItemLocked(slot) then
 				-- neither container item nor inventory item locked, perform swap
 				local directSwap = true -- assume a direct swap will happen
 				if (select(7, GetItemInfo(GetInventoryItemLink("player", 19 + b) or ""))) == TrinketMenu.ENGINEERING_BAG then
@@ -1115,7 +1112,7 @@ function TrinketMenu.UpdateCombatQueue()
 		if trinket then
 			_, bag, slot = TrinketMenu.FindItem(trinket)
 			if bag then
-				icon:SetTexture(TrinketMenu.GetContainerItemInfo(bag, slot))
+				icon:SetTexture(TrinketMenu.GetContainerItemInfo(bag, slot).iconFileID)
 				icon:Show()
 			end
 		elseif TrinketMenu.QueueInit and TrinketMenuQueue and TrinketMenuQueue.Enabled[which] then
@@ -1139,7 +1136,7 @@ function TrinketMenu.Notify(msg)
 		ct.frames[3]:AddMessage(msg, 255, 0, 0)
 	elseif xCT_Plus then -- send via xCT+ if it exists
 		xCT_Plus:AddMessage("general", msg, {1, 0, 0})
-	elseif SHOW_COMBAT_TEXT == "1" then -- or default UI's SCT
+	elseif SHOW_COMBAT_TEXT == "1" and CombatText_AddMessage then -- or default UI's SCT
 		CombatText_AddMessage(msg, CombatText_StandardScroll, .2, .7, .9)
 	else
 		-- send vis UIErrorsFrame if neither SCT exists
