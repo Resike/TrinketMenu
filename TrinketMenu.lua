@@ -62,7 +62,7 @@ end
 
 --[[ Misc Variables ]]--
 
-TrinketMenu_Version = GetAddOnMetadata("TrinketMenu", "Version")
+TrinketMenu_Version = C_AddOns.GetAddOnMetadata("TrinketMenu", "Version")
 BINDING_HEADER_TRINKETMENU = "TrinketMenu"
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket0:LeftButton", "Use Top Trinket")
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket1:LeftButton", "Use Bottom Trinket")
@@ -357,7 +357,7 @@ function TrinketMenu.Initialize()
 	TrinketMenu.CreateTimer("TooltipUpdate", TrinketMenu.TooltipUpdate, 1, 1)
 	TrinketMenu.CreateTimer("CooldownUpdate", TrinketMenu.CooldownUpdate, 1, 1)
 	TrinketMenu.CreateTimer("QueueUpdate", TrinketMenu.QueueUpdate, 1, 1)
-	TrinketMenu.CreateTimer("RedRange", TrinketMenu.RedRangeUpdate, .33, 1)
+	--TrinketMenu.CreateTimer("RedRange", TrinketMenu.RedRangeUpdate, .33, 1)
 	hooksecurefunc("UseInventoryItem", TrinketMenu.newUseInventoryItem)
 	hooksecurefunc("UseAction", TrinketMenu.newUseAction)
 	TrinketMenu.InitOptions()
@@ -371,7 +371,7 @@ function TrinketMenu.Initialize()
 		TrinketMenu.PeriodicQueueCheck()
 	end
 	--TrinketMenu.StartTimer("QueueUpdate")
-	TrinketMenu.ReflectRedRange()
+	--TrinketMenu.ReflectRedRange()
 	if TrinketMenuPerOptions.Visible == "ON" and (GetInventoryItemLink("player", 13) or GetInventoryItemLink("player", 14)) then
 		TrinketMenu_MainFrame:Show()
 	end
@@ -1268,7 +1268,7 @@ end
 
 --[[ Monitor Range ]]
 
-function TrinketMenu.ReflectRedRange()
+--[[function TrinketMenu.ReflectRedRange()
 	if TrinketMenuOptions.RedRange == "ON" then
 		TrinketMenu.StartTimer("RedRange")
 	else
@@ -1282,10 +1282,10 @@ function TrinketMenu.RedRangeUpdate()
 	local item
 	for i = 13, 14 do
 		item = GetInventoryItemLink("player", i)
-		if item and IsItemInRange(item) == 0 then
+		if item and C_Item.IsItemInRange(item, "target") == 0 then
 			_G["TrinketMenu_Trinket"..(i - 13).."Icon"]:SetVertexColor(1, .3, .3)
 		else
 			_G["TrinketMenu_Trinket"..(i - 13).."Icon"]:SetVertexColor(1, 1, 1)
 		end
 	end
-end
+end]]

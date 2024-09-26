@@ -255,8 +255,8 @@ function TrinketMenu.CheckButton_OnClick(self)
 		TrinketMenu.KeyBindingsChanged()
 	elseif self == TrinketMenu_OptShowIcon then
 		TrinketMenu.MoveMinimapButton()
-	elseif self == TrinketMenu_OptRedRange then
-		TrinketMenu.ReflectRedRange()
+	--[[elseif self == TrinketMenu_OptRedRange then
+		TrinketMenu.ReflectRedRange()]]
 	elseif self == TrinketMenu_OptMenuOnRight then
 		TrinketMenu.ReflectMenuOnRight()
 	elseif self == TrinketMenu_OptNotify or self == TrinketMenu_OptNotifyThirty then
