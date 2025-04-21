@@ -415,14 +415,18 @@ end
 function TrinketMenu.FindItem(name, includeInventory)
 	if includeInventory then
 		for i = 13, 14 do
-			if string.find(GetInventoryItemLink("player", i) or "", name, 1, true) then
+			local itemLink = GetInventoryItemLink("player", i) or ""
+			local itemName = GetItemInfo(itemLink)
+			if itemName == name then
 				return i
 			end
 		end
 	end
 	for i = 0, 4 do
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
-			if string.find(TrinketMenu.GetContainerItemLink(i, j) or "", name, 1, true) then
+			local containerItemLink = TrinketMenu.GetContainerItemLink(i, j) or ""
+			local containerItemName = GetItemInfo(containerItemLink)
+			if containerItemName == name then
 				return nil, i, j
 			end
 		end
