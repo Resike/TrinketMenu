@@ -1,6 +1,6 @@
-## Interface: 110002, 40400, 11504
-## Title: TrinketMenu 11.0.0
-## Version: 11.0.0
+## Interface: 110100, 40402, 11507
+## Title: TrinketMenu 11.1.0
+## Version: 11.1.0
 ## Author: Gello, Resike
 ## Notes: Addon to manage trinkets.
 ## SavedVariables: TrinketMenuOptions
