@@ -6,6 +6,10 @@ local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 
 TrinketMenu.PausedQueue = { } -- 0 or 1 whether queue is paused
 
+local TRINKET_KEEP_BUFF_AFTER_SWAP = {
+	[19341] = true,
+}
+
 function TrinketMenu.QueueInit()
 	TrinketMenuQueue = TrinketMenuQueue or {
 		Stats = { }, -- indexed by id of trinket, delay, priority and keep
@@ -335,24 +339,20 @@ function TrinketMenu.ProcessAutoQueue(which)
 		icon:SetVertexColor(1, .5, .5) -- leave if SetQueue(which, "PAUSE")
 		return
 	end
-	local buffName
-	if IsClassic then
-		local _
-		_, buffName = GetItemSpell(id)
-	else
-		buffName = GetItemSpell(id)
-	end
+	local buffName = GetItemSpell(id)
 	if buffName then
 		if IsClassic then
-			local i = 1
-			local buff
-			while UnitAura("player", i, "HELPFUL") do
-				buff = UnitAura("player", i, "HELPFUL")
-				if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-					icon:SetDesaturated(true)
-					return
+			if not TRINKET_KEEP_BUFF_AFTER_SWAP[id] then
+				local i = 1
+				local buff
+				while UnitAura("player", i, "HELPFUL") do
+					buff = UnitAura("player", i, "HELPFUL")
+					if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
+						icon:SetDesaturated(true)
+						return
+					end
+					i = i + 1
 				end
-				i = i + 1
 			end
 		else
 			if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
@@ -450,7 +450,7 @@ function TrinketMenu.SetQueue(which, ...)
 	elseif cmd == "RESUME" then
 		TrinketMenu.PausedQueue[which] = nil
 	elseif cmd == "SORT" and (select("#",...)) > 1 then
-		local sortidx, inv, bag, slot, id = 1
+		local inv, bag, slot
 		for i in pairs(TrinketMenuQueue.Sort[which]) do
 			TrinketMenuQueue.Sort[which][i] = nil
 		end

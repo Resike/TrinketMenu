@@ -412,12 +412,13 @@ function TrinketMenu.ItemInfo(slot)
 	return texture, name, equipLoc
 end
 
-function TrinketMenu.FindItem(name, includeInventory)
+function TrinketMenu.FindItem(item, includeInventory)
 	if includeInventory then
 		for i = 13, 14 do
 			local itemLink = GetInventoryItemLink("player", i) or ""
+			local inventoryItemID = strmatch(itemLink, "item:(%d+)")
 			local itemName = GetItemInfo(itemLink)
-			if itemName == name then
+			if item == itemName or item == inventoryItemID then
 				return i
 			end
 		end
@@ -425,8 +426,9 @@ function TrinketMenu.FindItem(name, includeInventory)
 	for i = 0, 4 do
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 			local containerItemLink = TrinketMenu.GetContainerItemLink(i, j) or ""
+			local containerItemID = strmatch(containerItemLink, "item:(%d+)")
 			local containerItemName = GetItemInfo(containerItemLink)
-			if containerItemName == name then
+			if item == containerItemName or item == containerItemID then
 				return nil, i, j
 			end
 		end
