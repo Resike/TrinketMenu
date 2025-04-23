@@ -339,28 +339,6 @@ function TrinketMenu.ProcessAutoQueue(which)
 		icon:SetVertexColor(1, .5, .5) -- leave if SetQueue(which, "PAUSE")
 		return
 	end
-	local buffName = GetItemSpell(id)
-	if buffName then
-		if IsClassic then
-			if not TRINKET_KEEP_BUFF_AFTER_SWAP[id] then
-				local i = 1
-				local buff
-				while UnitAura("player", i, "HELPFUL") do
-					buff = UnitAura("player", i, "HELPFUL")
-					if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-						icon:SetDesaturated(true)
-						return
-					end
-					i = i + 1
-				end
-			end
-		else
-			if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-				icon:SetDesaturated(true)
-				return
-			end
-		end
-	end
 	if TrinketMenuQueue.Stats[id] then
 		if TrinketMenuQueue.Stats[id].keep then
 			icon:SetVertexColor(1, .5, .5)
@@ -371,6 +349,29 @@ function TrinketMenu.ProcessAutoQueue(which)
 			if start > 0 and (duration - timeLeft) > 30 and timeLeft < TrinketMenuQueue.Stats[id].delay then
 				icon:SetDesaturated(true)
 				return
+			end
+		else
+			local buffName = GetItemSpell(id)
+			if buffName then
+				if IsClassic then
+					if not TRINKET_KEEP_BUFF_AFTER_SWAP[id] then
+						local i = 1
+						local buff
+						while UnitAura("player", i, "HELPFUL") do
+							buff = UnitAura("player", i, "HELPFUL")
+							if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
+								icon:SetDesaturated(true)
+								return
+							end
+							i = i + 1
+						end
+					end
+				else
+					if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
+						icon:SetDesaturated(true)
+						return
+					end
+				end
 			end
 		end
 	end
