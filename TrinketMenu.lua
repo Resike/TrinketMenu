@@ -1258,13 +1258,29 @@ function TrinketMenu.ReflectAlpha()
 end
 
 --[[ Key bindings ]]
-
 function TrinketMenu.KeyBindingsChanged()
 	if TrinketMenuOptions.ShowHotKeys == "ON" then
 		local key
 		for i = 0, 1 do
+			local hotkeyFrame = _G["TrinketMenu_Trinket"..i.."HotKey"]
 			key = GetBindingKey("CLICK TrinketMenu_Trinket"..i..":LeftButton")
-			_G["TrinketMenu_Trinket"..i.."HotKey"]:SetText(GetBindingText(key or "", nil, 1))
+			local keyText = GetBindingText(key or "", nil, 1)
+
+			--Change made by Driev--------------------------------------------------------------
+			  -- Replace "Mouse Button" patterns with "M" and add modifiers explicitly
+			  keyText = keyText
+			  :gsub("SHIFT%-", "S")    -- Replace "Shift-" with "S"
+			  :gsub("CTRL%-", "C")     -- Replace "Ctrl-" with "C"
+			  :gsub("ALT%-", "A")      -- Replace "Alt-" with "A"
+			  :gsub("Mouse Button (%d+)", "M%1") -- Replace "Mouse Button X" with "MX"
+
+
+			hotkeyFrame:SetText(keyText)
+			hotkeyFrame:SetFont("Fonts\\Expressway.TTF", 14, "OUTLINE")
+
+			hotkeyFrame:ClearAllPoints()  -- Clear existing anchors
+            hotkeyFrame:SetPoint("TOPRIGHT", _G["TrinketMenu_Trinket"..i], "TOPRIGHT", 3, -2)
+			-------------------------------------------------------------------------------------
 		end
 	else
 		TrinketMenu_Trinket0HotKey:SetText("")
