@@ -1274,7 +1274,6 @@ function TrinketMenu.KeyBindingsChanged()
 			  :gsub("ALT%-", "A")      -- Replace "Alt-" with "A"
 			  :gsub("Mouse Button (%d+)", "M%1") -- Replace "Mouse Button X" with "MX"
 
-
 			hotkeyFrame:SetText(keyText)
 			hotkeyFrame:SetFont("Fonts\\Expressway.TTF", 14, "OUTLINE")
 
