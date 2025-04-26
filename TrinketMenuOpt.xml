@@ -83,7 +83,7 @@
 		<HighlightTexture alphaMode = "ADD" file = "Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
 	<Frame name = "TrinketMenu_OptFrame" parent = "UIParent" movable = "true" toplevel = "true" clampedToScreen = "true" hidden = "true" inherits = "TrinketMenuBackdropTemplate">
-		<Size x = "300" y = "336"/>
+		<Size x = "300" y = "356"/>
 		<Anchors>
 			<Anchor point = "CENTER"/>
 		</Anchors>
@@ -260,11 +260,29 @@
 							</Anchor>
 						</Anchors>
 					</CheckButton>
-					<CheckButton name = "TrinketMenu_OptShowTooltips" inherits = "TrinketMenu_CheckButtonTemplate">
+					<CheckButton name = "TrinketMenu_OptCooldownCountBlizzard" inherits = "TrinketMenu_CheckButtonTemplate">
 						<Anchors>
 							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptLargeCooldown" relativePoint = "BOTTOMLEFT">
 								<Offset>
 									<AbsDimension x = "-16" y = "4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</CheckButton>
+					<CheckButton name = "TrinketMenu_OptCooldownCountOmniCC" inherits = "TrinketMenu_CheckButtonTemplate">
+						<Anchors>
+							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptCooldownCountBlizzard" relativePoint = "BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x = "0" y = "4"/>
+								</Offset>
+							</Anchor>
+						</Anchors>
+					</CheckButton>
+					<CheckButton name = "TrinketMenu_OptShowTooltips" inherits = "TrinketMenu_CheckButtonTemplate">
+						<Anchors>
+							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptCooldownCountOmniCC" relativePoint = "BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x = "0" y = "4"/>
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -305,7 +323,7 @@
 							</Anchor>
 						</Anchors>
 					</CheckButton>
-					<CheckButton name = "TrinketMenu_OptRedRange" inherits = "TrinketMenu_CheckButtonTemplate">
+					<!--<CheckButton name = "TrinketMenu_OptRedRange" inherits = "TrinketMenu_CheckButtonTemplate">
 						<Anchors>
 							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptStopOnSwap" relativePoint = "BOTTOMLEFT">
 								<Offset>
@@ -313,10 +331,10 @@
 								</Offset>
 							</Anchor>
 						</Anchors>
-					</CheckButton>
+					</CheckButton>-->
 					<CheckButton name = "TrinketMenu_OptHidePetBattle" inherits = "TrinketMenu_CheckButtonTemplate">
 						<Anchors>
-							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptRedRange" relativePoint = "BOTTOMLEFT">
+							<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptStopOnSwap" relativePoint = "BOTTOMLEFT">
 								<Offset>
 									<AbsDimension x = "0" y = "4"/>
 								</Offset>

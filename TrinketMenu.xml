@@ -43,7 +43,6 @@
 					self.TogglePopup = function() end
 				end
 				if self.cooldown then
-					self.cooldown:SetHideCountdownNumbers(true)
 					self.cooldown:SetSwipeColor(0, 0, 0, 0.8)
 				end
 				if self.icon then
@@ -172,7 +171,6 @@
 						end
 						self:RegisterForClicks("LeftButtonDown", "LeftButtonUp", "RightButtonUp")
 						if self.cooldown then
-							self.cooldown:SetHideCountdownNumbers(true)
 							self.cooldown:SetSwipeColor(0, 0, 0, 0.8)
 						end
 						if self.icon then
@@ -201,7 +199,6 @@
 						end
 						self:RegisterForClicks("LeftButtonDown", "LeftButtonUp", "RightButtonUp")
 						if self.cooldown then
-							self.cooldown:SetHideCountdownNumbers(true)
 							self.cooldown:SetSwipeColor(0, 0, 0, 0.8)
 						end
 						if self.icon then
