@@ -22,8 +22,8 @@ function TrinketMenu.LoadDefaults()
 		ShowIcon = "ON",				-- whether to show the minimap button
 		SquareMinimap = "OFF",			-- whether the minimap is square instead of circular
 		CooldownCount = "OFF",			-- whether to display numerical cooldown counters
-		CooldownCountBlizzard = "OFF",	-- whether to display numerical blizzard cooldown counters
-		CooldownCountOmniCC = "OFF",	-- whether to display numerical omnicc cooldown counters
+		CooldownCountBlizzard = "ON",	-- whether to display numerical blizzard cooldown counters
+		CooldownCountOmniCC = "ON",		-- whether to display numerical omnicc cooldown counters
 		LargeCooldown = "ON",			-- whether cooldown numbers are large or small
 		TooltipFollow = "OFF",			-- whether tooltips follow the mouse
 		KeepOpen = "OFF",				-- whether menu hides after use
@@ -326,8 +326,8 @@ function TrinketMenu.Initialize()
 	options.HideOnLoad = options.HideOnLoad or "OFF" -- 3.4
 	options.RedRange = options.RedRange or "OFF" -- 3.54
 	options.HidePetBattle = options.HidePetBattle or "ON" -- 6.0.3
-	options.CooldownCountBlizzard = options.CooldownCountBlizzard or "OFF" -- 11.1.6
-	options.CooldownCountOmniCC = options.CooldownCountOmniCC or "OFF" -- 11.1.6
+	options.CooldownCountBlizzard = options.CooldownCountBlizzard or "ON" -- 11.1.6
+	options.CooldownCountOmniCC = options.CooldownCountOmniCC or "ON" -- 11.1.6
 	TrinketMenuPerOptions.Alpha = TrinketMenuPerOptions.Alpha or 1 -- 3.5
 	TrinketMenuPerOptions.Hidden = TrinketMenuPerOptions.Hidden or { }
 	options.MenuOnRight = options.MenuOnRight or "OFF" -- 3.61
