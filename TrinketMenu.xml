@@ -232,7 +232,7 @@
 		</Scripts>
 	</Frame>
 	<!-- MenuFrame: Bagged Trinkets -->
-	<Frame name = "TrinketMenu_MenuFrame" toplevel = "true" frameStrata = "HIGH" enableMouse = "true" movable = "true" parent = "UIParent" hidden = "true" clampedToScreen = "true" inherits = "TrinketMenuBackdropTemplate">
+	<Frame name = "TrinketMenu_MenuFrame" toplevel = "true" frameStrata = "BACKGROUND" enableMouse = "true" movable = "true" parent = "UIParent" hidden = "true" clampedToScreen = "true" inherits = "TrinketMenuBackdropTemplate">
 		<Size>
 			<AbsDimension x = "52" y = "92" />
 		</Size>
