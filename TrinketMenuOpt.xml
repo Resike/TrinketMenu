@@ -48,7 +48,7 @@
 		</Scripts>
 	</CheckButton>
 	<!-- Minimap button -->
-	<Button name = "TrinketMenu_IconFrame" frameStrata = "LOW" parent = "Minimap" enableMouse = "true" movable = "true" toplevel = "true" hidden = "false">
+	<Button name = "TrinketMenu_IconFrame" frameStrata = "MEDIUM" parent = "Minimap" enableMouse = "true" movable = "true" toplevel = "true" hidden = "false">
 		<Size>
 			<AbsDimension x = "32" y = "32"/>
 		</Size>

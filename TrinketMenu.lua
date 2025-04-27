@@ -1,4 +1,4 @@
---[[ TrinketMenu 9.0.7 ]]--
+﻿--[[ TrinketMenu 11.1.8 ]]--
 
 TrinketMenu = { }
 
@@ -503,13 +503,13 @@ function TrinketMenu.OnEvent(self, event, ...)
 		TrinketMenu.UpdateWornCooldowns(1)
 	elseif event == "PET_BATTLE_OPENING_START" then
 		if TrinketMenuOptions.HidePetBattle == "ON" then
-			if TrinketMenu_MainFrame:IsShown() then
+			TrinketMenu_MainFrame.WasShown = TrinketMenu_MainFrame:IsShown()
+			if TrinketMenu_MainFrame.WasShown then
 				TrinketMenu_MainFrame:Hide()
-				TrinketMenu_MainFrame.WasShown = true
 			end
-			if TrinketMenu_MenuFrame:IsShown() then
+			TrinketMenu_MenuFrame.WasShown = TrinketMenu_MenuFrame:IsShown()
+			if TrinketMenu_MenuFrame.WasShown then
 				TrinketMenu_MenuFrame:Hide()
-				TrinketMenu_MenuFrame.WasShown = true
 			end
 		end
 	elseif event == "PET_BATTLE_CLOSE" then
@@ -1287,12 +1287,7 @@ function TrinketMenu.OnShow()
 end
 
 function TrinketMenu.OnHide()
-	if not UIParent:IsShown() or (IsRetail and C_PetBattles.IsInBattle() or false) then
-		TrinketMenu_MenuFrame.WasShown = false
-		return
-	end
 	TrinketMenu_MenuFrame:Hide()
-	TrinketMenu_MenuFrame.WasShown = true
 	TrinketMenuPerOptions.Visible = "OFF"
 end
 
