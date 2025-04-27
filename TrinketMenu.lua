@@ -1,4 +1,4 @@
-﻿--[[ TrinketMenu 9.0.7 ]]--
+--[[ TrinketMenu 9.0.7 ]]--
 
 TrinketMenu = { }
 
@@ -1281,7 +1281,7 @@ end
 
 function TrinketMenu.OnShow()
 	TrinketMenuPerOptions.Visible = "ON"
-	if TrinketMenuOptions.KeepOpen == "ON" and TrinketMenu_MenuFrame.WasShown then
+	if TrinketMenuOptions.KeepOpen == "ON" then
 		TrinketMenu.BuildMenu()
 	end
 end
