@@ -1,4 +1,4 @@
-## Interface: 110105, 40402, 11507
+## Interface: 11508, 20505
 ## Title: TrinketMenu 11.1.8
 ## Version: 11.1.8
 ## Author: Gello, Resike

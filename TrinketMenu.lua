@@ -64,7 +64,7 @@ end
 
 --[[ Misc Variables ]]--
 
-TrinketMenu_Version = C_AddOns.GetAddOnMetadata("TrinketMenu", "Version")
+TrinketMenu_Version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("TrinketMenu", "Version")
 BINDING_HEADER_TRINKETMENU = "TrinketMenu"
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket0:LeftButton", "Use Top Trinket")
 setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket1:LeftButton", "Use Bottom Trinket")
@@ -169,28 +169,59 @@ function TrinketMenu.ScaleFrame(scale)
 	TrinketMenu.FrameToScale:SetScale(scale)
 end
 
-function TrinketMenu.GetContainerNumSlots(bagID)
-	return C_Container.GetContainerNumSlots(bagID)
-end
-
-function TrinketMenu.GetContainerItemCooldown(bagID, slotIndex)
-	return C_Container.GetContainerItemCooldown(bagID, slotIndex)
-end
-
-function TrinketMenu.GetContainerItemInfo(bagID, slotIndex)
-	return C_Container.GetContainerItemInfo(bagID, slotIndex)
-end
-
-function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
-	return C_Container.GetContainerItemLink(bagID, slotIndex)
-end
-
-function TrinketMenu.PickupContainerItem(bagID, slotIndex)
-	return C_Container.PickupContainerItem(bagID, slotIndex)
-end
-
-function TrinketMenu.GetItemCooldown(itemID)
-	return C_Container.GetItemCooldown(itemID)
+if C_Container then
+	function TrinketMenu.GetContainerNumSlots(bagID)
+		return C_Container.GetContainerNumSlots(bagID)
+	end
+	function TrinketMenu.GetContainerItemCooldown(bagID, slotIndex)
+		return C_Container.GetContainerItemCooldown(bagID, slotIndex)
+	end
+	function TrinketMenu.GetContainerItemInfo(bagID, slotIndex)
+		return C_Container.GetContainerItemInfo(bagID, slotIndex)
+	end
+	function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
+		return C_Container.GetContainerItemLink(bagID, slotIndex)
+	end
+	function TrinketMenu.PickupContainerItem(bagID, slotIndex)
+		return C_Container.PickupContainerItem(bagID, slotIndex)
+	end
+	function TrinketMenu.GetItemCooldown(itemID)
+		return C_Container.GetItemCooldown(itemID)
+	end
+else
+	function TrinketMenu.GetContainerNumSlots(bagID)
+		return _G.GetContainerNumSlots(bagID)
+	end
+	function TrinketMenu.GetContainerItemCooldown(bagID, slotIndex)
+		return _G.GetContainerItemCooldown(bagID, slotIndex)
+	end
+	function TrinketMenu.GetContainerItemInfo(bagID, slotIndex)
+		local texture, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound = _G.GetContainerItemInfo(bagID, slotIndex)
+		if texture then
+			return {
+				iconFileID = texture,
+				stackCount = itemCount,
+				isLocked = locked,
+				quality = quality,
+				isReadable = readable,
+				hasLoot = lootable,
+				hyperlink = itemLink,
+				isFiltered = isFiltered,
+				hasNoValue = noValue,
+				itemID = itemID,
+				isBound = isBound,
+			}
+		end
+	end
+	function TrinketMenu.GetContainerItemLink(bagID, slotIndex)
+		return _G.GetContainerItemLink(bagID, slotIndex)
+	end
+	function TrinketMenu.PickupContainerItem(bagID, slotIndex)
+		return _G.PickupContainerItem(bagID, slotIndex)
+	end
+	function TrinketMenu.GetItemCooldown(itemID)
+		return _G.GetItemCooldown(itemID)
+	end
 end
 
 -- scan inventory and build MenuFrame
