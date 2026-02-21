@@ -462,6 +462,7 @@ function TrinketMenu.Initialize()
 end
 
 function TrinketMenu.ReflectMenuOnRight()
+	if InCombatLockdown() then return end
 	TrinketMenu_Trinket0:SetAttribute("slot2", TrinketMenuOptions.MenuOnRight == "ON" and ATTRIBUTE_NOOP or nil)
 	TrinketMenu_Trinket1:SetAttribute("slot2", TrinketMenuOptions.MenuOnRight == "ON" and ATTRIBUTE_NOOP or nil)
 end
@@ -693,6 +694,7 @@ end
 --[[ Window Movement ]]--
 
 function TrinketMenu.MainFrame_OnMouseUp(self)
+	if InCombatLockdown() then return end
 	local arg1 = GetMouseButtonClicked()
 	if arg1 == "LeftButton" then
 		self:StopMovingOrSizing()
@@ -709,6 +711,7 @@ function TrinketMenu.MainFrame_OnMouseUp(self)
 end
 
 function TrinketMenu.MainFrame_OnMouseDown(self)
+	if InCombatLockdown() then return end
 	if GetMouseButtonClicked() == "LeftButton" and TrinketMenuOptions.Locked == "OFF" then
 		self:StartMoving()
 	end
@@ -841,6 +844,7 @@ end
 --[[ Docking ]]
 
 function TrinketMenu.MenuFrame_OnMouseDown(button)
+	if InCombatLockdown() then return end
 	if button == "LeftButton" and TrinketMenuOptions.Locked == "OFF" then
 		TrinketMenu_MenuFrame:StartMoving()
 		if TrinketMenuOptions.KeepDocked == "ON" then
@@ -850,6 +854,7 @@ function TrinketMenu.MenuFrame_OnMouseDown(button)
 end
 
 function TrinketMenu.MenuFrame_OnMouseUp(button)
+	if InCombatLockdown() then return end
 	if button == "LeftButton" then
 		TrinketMenu.StopTimer("DockingMenu")
 		TrinketMenu_MenuFrame:StopMovingOrSizing()
