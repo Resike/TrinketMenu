@@ -1,4 +1,4 @@
-﻿--[[ TrinketMenuOpt.lua : Options and sort window for TrinketMenu ]]
+--[[ TrinketMenuOpt.lua : Options and sort window for TrinketMenu ]]
 
 local _G, math, string, table = _G, math, string, table
 
@@ -8,8 +8,8 @@ TrinketMenu.CheckOptInfo = {
 	{"ShowIcon", "ON", "Minimap Button", "Show or hide minimap button."},
 	{"SquareMinimap", "OFF", "Square Minimap", "Move minimap button as if around a square minimap.", "ShowIcon"},
 	{"CooldownCount", "OFF", "Cooldown Numbers", "Display time remaining on cooldowns ontop of the button."},
-	{"CooldownCountBlizzard", "OFF", "Blizzard Cooldowns", "Display time remaining on cooldowns ontop of the button."},
-	{"CooldownCountOmniCC", "OFF", "OmniCC Cooldowns", "Display time remaining on cooldowns ontop of the button."},
+	{"CooldownCountBlizzard", "ON", "Blizzard Cooldowns", "Display time remaining on cooldowns ontop of the button."},
+	{"CooldownCountOmniCC", "ON", "OmniCC Cooldowns", "Display time remaining on cooldowns ontop of the button."},
 	{"TooltipFollow", "OFF", "At Mouse", "Display all tooltips near the mouse.", "ShowTooltips"},
 	{"KeepOpen", "OFF", "Keep Menu Open", "Keep menu open at all times."},
 	{"KeepDocked", "ON", "Keep Menu Docked", "Keep menu docked at all times."},

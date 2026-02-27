@@ -1,4 +1,4 @@
-﻿--[[ TrinketMenuQueue : auto queue system ]]
+--[[ TrinketMenuQueue : auto queue system ]]
 
 local _G, type, string, tonumber, table, pairs, select = _G, type, string, tonumber, table, pairs, select
 
@@ -56,14 +56,14 @@ function TrinketMenu.GetID(bag, slot)
 	else
 		_, _, id = string.find(GetInventoryItemLink("player", bag) or "", "item:(%d+)")
 	end
-	return id
+	return id or 0
 end
 
 function TrinketMenu.GetNameByID(id)
 	if id == 0 then
 		return "-- stop queue here --", "Interface\\Buttons\\UI-GroupLoot-Pass-Up", 1
 	else
-		local name, _, quality, _, _, _, _, _, _, texture = GetItemInfo(id or "")
+		local name, _, quality, _, _, _, _, _, _, texture = C_Item.GetItemInfo(id or "")
 		return name, texture, quality
 	end
 end
@@ -91,7 +91,7 @@ function TrinketMenu.PopulateSort(which)
 	for i = 0, 4 do
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 			id = TrinketMenu.GetID(i, j)
-			_, _, _, _, _, _, _, _, equipLoc = GetItemInfo(id or "")
+			_, _, _, _, _, _, _, _, equipLoc = C_Item.GetItemInfo(id or "")
 			if equipLoc=="INVTYPE_TRINKET" then
 				TrinketMenu.AddToSort(which, id)
 			end
@@ -118,7 +118,7 @@ function TrinketMenu.SortScrollFrameUpdate()
 				itemIcon:SetTexture(texture)
 				itemName:SetText(name)
 				if quality then -- GetItemInfo may not be valid early on after patches
-					r, g, b = GetItemQualityColor(quality)
+					r, g, b = C_Item.GetItemQualityColor(quality)
 					itemName:SetTextColor(r, g, b)
 					itemIcon:SetVertexColor(1, 1, 1)
 				end
@@ -160,9 +160,8 @@ end
 -- shows tooltip for items in the sort list
 function TrinketMenu.SortTooltip(self)
 	local idx = FauxScrollFrame_GetOffset(TrinketMenu_SortScroll) + self:GetID()
-	local _
-	local name, itemLink = GetItemInfo(TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][idx] or "")
-	_, _, itemLink = string.find(itemLink or "","(item:%d+:%d+:%d+:%d+:%d+:%d+:%d+)")
+	local _, itemLink = C_Item.GetItemInfo(TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][idx] or "")
+	itemLink = string.match(itemLink or "", "item:[%d:]+")
 	if itemLink and TrinketMenuOptions.ShowTooltips == "ON" then
 		TrinketMenu.AnchorTooltip(self)
 		GameTooltip:SetHyperlink(itemLink)
@@ -323,7 +322,7 @@ end
 
 -- which = 0 or 1, decides if a trinket should be equipped and equips if so
 function TrinketMenu.ProcessAutoQueue(which)
-	local _, _, id, name = string.find(GetInventoryItemLink("player", 13 + which) or "", "item:(%d+).+%[(.+)%]")
+	local _, _, id = string.find(GetInventoryItemLink("player", 13 + which) or "", "item:(%d+)")
 	if not id then
 		return
 	end -- leave if no trinket equipped
@@ -352,23 +351,10 @@ function TrinketMenu.ProcessAutoQueue(which)
 				return
 			end
 		else
-			local buffName = GetItemSpell(id)
+			local buffName = C_Item.GetItemSpell(id)
 			if buffName then
-				if IsClassic then
+				if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
 					if not TRINKET_KEEP_BUFF_AFTER_SWAP[id] then
-						local i = 1
-						local buff
-						while UnitAura("player", i, "HELPFUL") do
-							buff = UnitAura("player", i, "HELPFUL")
-							if buffName == buff or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
-								icon:SetDesaturated(true)
-								return
-							end
-							i = i + 1
-						end
-					end
-				else
-					if AuraUtil.FindAuraByName(buffName, "player", "HELPFUL") or (start > 0 and (duration - timeLeft) > 30 and timeLeft < 1) then
 						icon:SetDesaturated(true)
 						return
 					end
@@ -384,7 +370,7 @@ function TrinketMenu.ProcessAutoQueue(which)
 		TrinketMenu.CombatQueue[which] = nil
 		TrinketMenu.UpdateCombatQueue()
 	end
-	local list, rank = TrinketMenuQueue.Sort[which]
+	local list, rank = TrinketMenuQueue.Sort[which], nil
 	for i = 1, #list do
 		if list[i] == 0 then
 			rank = i
@@ -399,10 +385,10 @@ function TrinketMenu.ProcessAutoQueue(which)
 		for i = 1, rank do
 			if not ready or enable == 0 or (TrinketMenuQueue.Stats[list[i]] and TrinketMenuQueue.Stats[list[i]].priority) then
 				if TrinketMenu.TrinketNearReady(list[i]) then
-					if GetItemCount(list[i]) > 0 and not IsEquippedItem(list[i]) then
+					if C_Item.GetItemCount(list[i]) > 0 and not C_Item.IsEquippedItem(list[i]) then
 						local _, bag, slot = TrinketMenu.FindItem(list[i])
-						if bag then
-							name = GetItemInfo(list[i])
+						if bag and slot then
+							name = C_Item.GetItemInfo(list[i])
 							if TrinketMenu.CombatQueue[which] ~= name then
 								TrinketMenu.EquipTrinketByName(name, 13 + which)
 							end
@@ -488,7 +474,7 @@ function TrinketMenu.GetQueue(which)
 		DEFAULT_CHAT_FRAME:AddMessage("|cFFBBBBBBTrinketMenu.GetQueue:|cFFFFFFFF Parameter must be 0 for top trinket or 1 for bottom.")
 		return
 	end
-	local trinketList, name = { }
+	local trinketList, name = { }, nil
 	for i = 1, #TrinketMenuQueue.Sort[which] do
 		name = TrinketMenu.GetNameByID(TrinketMenuQueue.Sort[which][i])
 		table.insert(trinketList, name)
