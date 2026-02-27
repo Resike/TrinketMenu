@@ -8,7 +8,7 @@ local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 TrinketMenu.PausedQueue = { } -- 0 or 1 whether queue is paused
 
 local TRINKET_KEEP_BUFF_AFTER_SWAP = {
-	[19341] = true,
+	["19341"] = true,
 }
 
 function TrinketMenu.QueueInit()

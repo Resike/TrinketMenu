@@ -247,6 +247,7 @@ function TrinketMenu.CheckButton_OnClick(self)
 	if self == TrinketMenu_OptCooldownCount then
 		TrinketMenu.WriteWornCooldowns()
 		TrinketMenu.WriteMenuCooldowns()
+		TrinketMenu.StartTimer("CooldownUpdate")
 	elseif self == TrinketMenu_OptCooldownCountBlizzard then
 		if TrinketMenu_Trinket0 and TrinketMenu_Trinket0.cooldown then
 			if TrinketMenuOptions.CooldownCountBlizzard == "ON" then

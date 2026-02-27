@@ -1,4 +1,4 @@
---[[ TrinketMenu 12.0.0 ]]--
+--[[ TrinketMenu 12.0.1 ]]--
 
 TrinketMenu = { }
 
@@ -232,7 +232,7 @@ function TrinketMenu.BuildMenu()
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 			itemLink = TrinketMenu.GetContainerItemLink(i, j)
 			if itemLink then
-				_, _, itemID, itemName = string.find(TrinketMenu.GetContainerItemLink(i, j) or "", "item:(%d+).+%[(.+)%]")
+				_, _, itemID, itemName = string.find(itemLink, "item:(%d+).+%[(.+)%]")
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = C_Item.GetItemInfo(itemID or "")
 				if equipSlot == "INVTYPE_TRINKET" and (IsAltKeyDown() or not TrinketMenuPerOptions.Hidden[itemID]) then
 					if not TrinketMenu.BaggedTrinkets[idx] then
@@ -475,8 +475,8 @@ function TrinketMenu.IsPlayerReallyDead()
 end
 
 function TrinketMenu.ItemInfo(slot)
-	local _
-	local link, id, name, equipLoc, texture = GetInventoryItemLink("player", slot)
+	local link = GetInventoryItemLink("player", slot)
+	local name, equipLoc, texture
 	if link then
 		local _, _, id = string.find(link, "item:(%d+)")
 		name, _, _, _, _, _, _, _, equipLoc, texture = C_Item.GetItemInfo(id)
@@ -778,9 +778,6 @@ function TrinketMenu.TimersFrame_OnUpdate(elapsed)
 			TrinketMenu.StopTimer(name)
 		end
 	end
-	if TrinketMenu.PeriodicQueueCheck then
-		TrinketMenu.PeriodicQueueCheck()
-	end -- Check for auto queue
 end
 
 function TrinketMenu.TimerDebug()
@@ -968,6 +965,7 @@ function TrinketMenu.ReflectTrinketUse(slot)
 end
 
 function TrinketMenu.UseInventoryItem(slot)
+	slot = tonumber(slot) -- /use 13-14
 	if (slot == 13 or slot == 14) and not MerchantFrame:IsVisible() then
 		TrinketMenu.ReflectTrinketUse(slot)
 	end
@@ -1247,7 +1245,8 @@ function TrinketMenu.Notify(msg)
 end
 
 function TrinketMenu.CooldownUpdate()
-	local inv, bag, slot, start, duration, name, remain
+	local start, duration, name, remain
+	local toRemove
 	for i in pairs(TrinketMenuPerOptions.ItemsUsed) do
 		start, duration = TrinketMenu.GetItemCooldown(i)
 		if start and TrinketMenuPerOptions.ItemsUsed[i] < 3 then
@@ -1280,8 +1279,14 @@ function TrinketMenu.CooldownUpdate()
 				end
 			end
 			if start == 0 then
-				TrinketMenuPerOptions.ItemsUsed[i] = nil
+				toRemove = toRemove or {}
+				toRemove[#toRemove + 1] = i
 			end
+		end
+	end
+	if toRemove then
+		for _, k in ipairs(toRemove) do
+			TrinketMenuPerOptions.ItemsUsed[k] = nil
 		end
 	end
 	-- update cooldown numbers
