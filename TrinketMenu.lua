@@ -1,4 +1,4 @@
---[[ TrinketMenu 12.0.1 ]]--
+--[[ TrinketMenu 12.0.2 ]]--
 
 TrinketMenu = { }
 
@@ -182,7 +182,8 @@ if C_Container then
 		return C_Container.PickupContainerItem(bagID, slotIndex)
 	end
 	function TrinketMenu.GetItemCooldown(itemID)
-		return C_Item.GetItemCooldown(itemID)
+		itemID = tonumber(itemID)
+		return C_Container.GetItemCooldown(itemID)
 	end
 else
 	function TrinketMenu.GetContainerNumSlots(bagID)
@@ -216,7 +217,8 @@ else
 		return _G.PickupContainerItem(bagID, slotIndex)
 	end
 	function TrinketMenu.GetItemCooldown(itemID)
-		return C_Item.GetItemCooldown(itemID)
+		itemID = tonumber(itemID)
+		return _G.GetItemCooldown(itemID)
 	end
 end
 
