@@ -1,6 +1,6 @@
 ## Interface: 120001, 50503, 20505, 11508
-## Title: TrinketMenu 12.0.3
-## Version: 12.0.3
+## Title: TrinketMenu 12.0.4
+## Version: 12.0.4
 ## Author: Gello, Resike, Icewitts
 ## Notes: A lightweight addon that simplifies trinket management with an easy-to-use interface for quickly swapping and auto-rotating your trinkets.
 ## IconTexture: Interface\AddOns\TrinketMenu\Textures\TrinketMenu-Icon-Up

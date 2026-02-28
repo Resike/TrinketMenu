@@ -1,4 +1,4 @@
---[[ TrinketMenu 12.0.3 ]]--
+--[[ TrinketMenu 12.0.4 ]]--
 
 TrinketMenu = { }
 
@@ -9,12 +9,12 @@ local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
--- localized strings required to support engineering bags
-TrinketMenu.BAG = "Bag" -- 7th return of GetItemInfo on a normal bag
-TrinketMenu.ENGINEERING_BAG = "Engineering Bag" -- 7th return of GetItemInfo on an engineering bag
-TrinketMenu.TRADE_GOODS = "Trade Goods" -- 6th return of GetItemInfo on most engineered trinkets
-TrinketMenu.DEVICES = "Devices" -- 7th return of GetItemInfo on most engineered trinkets
-TrinketMenu.REQUIRES_ENGINEERING = "Requires Engineering" -- from tooltip when GetItemInfo ambiguous
+-- ids required to support engineering bags
+TrinketMenu.BAG = 0 -- 13th return of GetItemInfo on a normal bag
+TrinketMenu.ENGINEERING_BAG = 4 -- 13th return of GetItemInfo on an engineering bag
+TrinketMenu.TRADE_GOODS = 7 -- 12th return of GetItemInfo on most engineered trinkets
+TrinketMenu.DEVICES = 3 -- 13th return of GetItemInfo on most engineered trinkets
+TrinketMenu.REQUIRES_ENGINEERING = UNIT_SKINNABLE_BOLTS -- from tooltip when GetItemInfo ambiguous
 
 function TrinketMenu.LoadDefaults()
 	TrinketMenuOptions = TrinketMenuOptions or {
@@ -182,7 +182,7 @@ if C_Container then
 		return C_Container.PickupContainerItem(bagID, slotIndex)
 	end
 	function TrinketMenu.GetItemCooldown(itemID)
-		itemID = tonumber(itemID)
+
 		return C_Container.GetItemCooldown(itemID)
 	end
 else
@@ -217,7 +217,6 @@ else
 		return _G.PickupContainerItem(bagID, slotIndex)
 	end
 	function TrinketMenu.GetItemCooldown(itemID)
-		itemID = tonumber(itemID)
 		return _G.GetItemCooldown(itemID)
 	end
 end
@@ -227,7 +226,7 @@ function TrinketMenu.BuildMenu()
 	if not IsShiftKeyDown() and TrinketMenuOptions.MenuOnShift == "ON" then
 		return
 	end
-	local idx = 1
+	local trinketIndex = 1
 	local _, itemLink, itemID, itemName, equipSlot, itemTexture
 	-- go through bags and gather trinkets into .BaggedTrinkets
 	for i = 0, 4 do
@@ -237,20 +236,20 @@ function TrinketMenu.BuildMenu()
 				_, _, itemID, itemName = string.find(itemLink, "item:(%d+).+%[(.+)%]")
 				_, _, _, _, _, _, _, _, equipSlot, itemTexture = C_Item.GetItemInfo(itemID or "")
 				if equipSlot == "INVTYPE_TRINKET" and (IsAltKeyDown() or not TrinketMenuPerOptions.Hidden[itemID]) then
-					if not TrinketMenu.BaggedTrinkets[idx] then
-						TrinketMenu.BaggedTrinkets[idx] = { }
+					if not TrinketMenu.BaggedTrinkets[trinketIndex] then
+						TrinketMenu.BaggedTrinkets[trinketIndex] = { }
 					end
-					TrinketMenu.BaggedTrinkets[idx].id = itemID
-					TrinketMenu.BaggedTrinkets[idx].bag = i
-					TrinketMenu.BaggedTrinkets[idx].slot = j
-					TrinketMenu.BaggedTrinkets[idx].name = itemName
-					TrinketMenu.BaggedTrinkets[idx].texture = itemTexture
-					idx = idx + 1
+					TrinketMenu.BaggedTrinkets[trinketIndex].id = itemID
+					TrinketMenu.BaggedTrinkets[trinketIndex].bag = i
+					TrinketMenu.BaggedTrinkets[trinketIndex].slot = j
+					TrinketMenu.BaggedTrinkets[trinketIndex].name = itemName
+					TrinketMenu.BaggedTrinkets[trinketIndex].texture = itemTexture
+					trinketIndex = trinketIndex + 1
 				end
 			end
 		end
 	end
-	TrinketMenu.NumberOfTrinkets = math.min(idx - 1, TrinketMenu.MaxTrinkets)
+	TrinketMenu.NumberOfTrinkets = math.min(trinketIndex - 1, TrinketMenu.MaxTrinkets)
 	if TrinketMenu.NumberOfTrinkets < 1 then
 		-- user has no bagged trinkets :(
 		TrinketMenu_MenuFrame:Hide()
@@ -964,6 +963,7 @@ function TrinketMenu.ReflectTrinketUse(slot)
 	_G["TrinketMenu_Trinket"..(slot - 13)]:SetChecked(true)
 	TrinketMenu.StartTimer("UpdateWornTrinkets")
 	local _, _, id = string.find(GetInventoryItemLink("player", slot) or "", "item:(%d+)")
+	id = tonumber(id)
 	if id then
 		TrinketMenuPerOptions.ItemsUsed[id] = 0 -- 0 is an indeterminate state, cooldown will figure if it's worth watching
 	end
@@ -982,9 +982,9 @@ function TrinketMenu.UseAction(slot)
 		TrinketMenu_TooltipScan:SetAction(slot)
 		local _, trinket0 = TrinketMenu.ItemInfo(13)
 		local _, trinket1 = TrinketMenu.ItemInfo(14)
-		if GameTooltipTextLeft1:GetText() == trinket0 then
+		if _G["TrinketMenu_TooltipScanTextLeft1"]:GetText() == trinket0 then
 			TrinketMenu.ReflectTrinketUse(13)
-		elseif GameTooltipTextLeft1:GetText() == trinket1 then
+		elseif _G["TrinketMenu_TooltipScanTextLeft1"]:GetText() == trinket1 then
 			TrinketMenu.ReflectTrinketUse(14)
 		end
 	end
@@ -1086,6 +1086,7 @@ end
 
 -- strip format reordering in global strings
 TrinketMenu.ITEM_SPELL_CHARGES = string.gsub(ITEM_SPELL_CHARGES, "%%%d%$d", "%%d")
+TrinketMenu.COOLDOWN_REMAINING = string.gsub(COOLDOWN_REMAINING, "%%%a", ".+")
 
 function TrinketMenu.ShrinkTooltip(owner)
 	if TrinketMenuOptions.TinyTooltips == "ON" then
@@ -1096,7 +1097,7 @@ function TrinketMenu.ShrinkTooltip(owner)
 			line = _G["GameTooltipTextLeft"..i]
 			if line:IsVisible() then
 				line = line:GetText() or ""
-				if string.find(line, COOLDOWN_REMAINING) then
+				if string.find(line, TrinketMenu.COOLDOWN_REMAINING) then
 					cooldown = line
 				end
 				if string.find(line, TrinketMenu.ITEM_SPELL_CHARGES) then
@@ -1111,19 +1112,21 @@ function TrinketMenu.ShrinkTooltip(owner)
 	end
 end
 
--- returns 1 if the item at bag(,slot) is an engineered trinket
+-- returns true if the item at bag(,slot) is an engineered trinket
 function TrinketMenu.IsEngineered(bag, slot)
 	local item = slot and TrinketMenu.GetContainerItemLink(bag, slot) or GetInventoryItemLink("player", bag)
 	if item then
-		local _, _, _, _, _, itemType, itemSubtype, _, itemLoc = C_Item.GetItemInfo(item)
-		if itemType == TrinketMenu.TRADE_GOODS and itemSubtype == TrinketMenu.DEVICES and itemLoc == "INVTYPE_TRINKET" then
-			return 1
+		local _, _, _, _, _, _, _, _, itemEquipLoc, _, _, classID, subClassID = C_Item.GetItemInfo(item)
+		if itemEquipLoc == "INVTYPE_TRINKET" and classID == TrinketMenu.TRADE_GOODS and subClassID == TrinketMenu.DEVICES then
+			return true
 		end
-		TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
-		TrinketMenu_TooltipScan:SetHyperlink(item)
-		for i = 1, TrinketMenu_TooltipScan:NumLines() do
-			if string.match(_G["TrinketMenu_TooltipScanTextLeft"..i]:GetText() or "", TrinketMenu.REQUIRES_ENGINEERING) then
-				return 1
+		if itemEquipLoc == "INVTYPE_TRINKET" then
+			TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
+			TrinketMenu_TooltipScan:SetHyperlink(item)
+			for i = 2, TrinketMenu_TooltipScan:NumLines() do
+				if string.match(_G["TrinketMenu_TooltipScanTextLeft"..i]:GetText() or "", TrinketMenu.REQUIRES_ENGINEERING) then
+					return true
+				end
 			end
 		end
 	end
@@ -1136,7 +1139,8 @@ function TrinketMenu.FindSpace(engineering)
 		if i == 0 then
 			bagType = TrinketMenu.BAG -- backpack is always a normal bag
 		else
-			bagType = (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 18 + i) or "")))
+			local bagLink = GetInventoryItemLink("player", C_Container.ContainerIDToInventoryID(i))
+			bagType = bagLink and (select(13, C_Item.GetItemInfo(bagLink)))
 		end
 		if (engineering and bagType == TrinketMenu.ENGINEERING_BAG) or (not engineering and bagType == TrinketMenu.BAG) then
 			for j = 1, TrinketMenu.GetContainerNumSlots(i) do
@@ -1173,17 +1177,20 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 			if itemInfo and not itemInfo.isLocked and not IsInventoryItemLocked(slot) then
 				-- neither container item nor inventory item locked, perform swap
 				local directSwap = true -- assume a direct swap will happen
-				if itemBag > 0 and (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 18 + itemBag) or ""))) == TrinketMenu.ENGINEERING_BAG then
-					-- incoming trinket is in an engineering bag
-					if not TrinketMenu.IsEngineered(slot) then
-						-- outgoing trinket can't go inside it
-						local freeBag, freeSlot = TrinketMenu.FindSpace()
-						if freeBag then
-							PickupInventoryItem(slot)
-							TrinketMenu.PickupContainerItem(freeBag, freeSlot)
-							TrinketMenu.PickupContainerItem(itemBag, itemSlot)
-							EquipCursorItem(slot)
-							directSwap = false
+				if itemBag > 0 then
+					local bagLink = GetInventoryItemLink("player", C_Container.ContainerIDToInventoryID(itemBag))
+					if bagLink and (select(13, C_Item.GetItemInfo(bagLink))) == TrinketMenu.ENGINEERING_BAG then
+						-- incoming trinket is in an engineering bag
+						if not TrinketMenu.IsEngineered(slot) then
+							-- outgoing trinket can't go inside it
+							local freeBag, freeSlot = TrinketMenu.FindSpace()
+							if freeBag then
+								PickupInventoryItem(slot)
+								TrinketMenu.PickupContainerItem(freeBag, freeSlot)
+								TrinketMenu.PickupContainerItem(itemBag, itemSlot)
+								EquipCursorItem(slot)
+								directSwap = false
+							end
 						end
 					end
 				elseif TrinketMenu.IsEngineered(slot) and not TrinketMenu.IsEngineered(itemBag, itemSlot) then
