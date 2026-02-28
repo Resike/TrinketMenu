@@ -85,14 +85,20 @@ end
 -- populates sorts adding any new trinkets
 function TrinketMenu.PopulateSort(which)
 	TrinketMenuQueue.Sort[which] = TrinketMenuQueue.Sort[which] or { }
-	TrinketMenu.AddToSort(which,TrinketMenu.GetID(which + 13))
-	TrinketMenu.AddToSort(which,TrinketMenu.GetID((1 - which) + 13))
+	local id = TrinketMenu.GetID(which + 13)
+	if id ~= 0 then
+		TrinketMenu.AddToSort(which, id)
+	end
+	id = TrinketMenu.GetID((1 - which) + 13)
+	if id ~= 0 then
+		TrinketMenu.AddToSort(which, id)
+	end
 	local _, equipLoc, id
 	for i = 0, 4 do
 		for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 			id = TrinketMenu.GetID(i, j)
 			_, _, _, _, _, _, _, _, equipLoc = C_Item.GetItemInfo(id or "")
-			if equipLoc=="INVTYPE_TRINKET" then
+			if equipLoc == "INVTYPE_TRINKET" then
 				TrinketMenu.AddToSort(which, id)
 			end
 		end
@@ -267,8 +273,11 @@ function TrinketMenu.SortMove(self)
 end
 
 function TrinketMenu.SortDelay_OnTextChanged()
-	local delay = tonumber(TrinketMenu_SortDelay:GetText()) or 0
 	local id = TrinketMenuQueue.Sort[TrinketMenu.CurrentlySorting][TrinketMenu.SortSelected]
+	if not id or id == 0 then
+		return
+	end
+	local delay = tonumber(TrinketMenu_SortDelay:GetText()) or 0
 	TrinketMenuQueue.Stats[id] = TrinketMenuQueue.Stats[id] or { }
 	TrinketMenuQueue.Stats[id].delay = delay ~= 0 and delay or nil
 end
@@ -428,20 +437,18 @@ function TrinketMenu.SetQueue(which, ...)
 	end
 	local cmd = (select(1, ...))
 	if cmd == "ON" then
-		TrinketMenuQueue.Enabled[which] = 1
+		TrinketMenuQueue.Enabled[which] = true
 		TrinketMenu.PausedQueue[which] = nil
 	elseif cmd == "OFF" then
 		TrinketMenuQueue.Enabled[which] = nil
 		TrinketMenu.PausedQueue[which] = nil
 	elseif cmd == "PAUSE" then
-		TrinketMenu.PausedQueue[which] = 1
+		TrinketMenu.PausedQueue[which] = true
 	elseif cmd == "RESUME" then
 		TrinketMenu.PausedQueue[which] = nil
-	elseif cmd == "SORT" and (select("#",...)) > 1 then
+	elseif cmd == "SORT" and (select("#", ...)) > 1 then
 		local inv, bag, slot
-		for i in pairs(TrinketMenuQueue.Sort[which]) do
-			TrinketMenuQueue.Sort[which][i] = nil
-		end
+		wipe(TrinketMenuQueue.Sort[which])
 		--table.setn(TrinketMenuQueue.Sort[which], 0)
 		local profile = TrinketMenu.GetProfileID((select(2,...)))
 		if profile then
@@ -643,9 +650,7 @@ end
 function TrinketMenu.LoadProfile(which, idx)
 	local list = TrinketMenuQueue.Sort[which]
 	local load = TrinketMenuQueue.Profiles[idx]
-	for i in pairs(list) do
-		list[i] = nil
-	end
+	wipe(list)
 	--table.setn(list, 0)
 	for i = 2, #load do
 		table.insert(list, load[i])

@@ -26,7 +26,7 @@ TrinketMenu.CheckOptInfo = {
 	{"ShowHotKeys", "ON", "Show Key Bindings", "Display the key bindings over the equipped trinkets."},
 	{"StopOnSwap", "OFF", "Stop Queue On Swap", "Swapping a passive trinket stops an auto queue.  Check this to also stop the auto queue when a clickable trinket is manually swapped in via TrinketMenu.  This will have the most use to those with frequent trinkets marked Priority."},
 	{"HideOnLoad", "OFF", "Close On Profile Load", "Check this to dismiss this window when you load a profile."},
-	{"RedRange", "OFF", "Red Out of Range", "Check this to red out worn trinkets that are out of range to a valid target.  ie, Gnomish Death Ray and Gnomish Net-O-Matic."},
+	--{"RedRange", "OFF", "Red Out of Range", "Check this to red out worn trinkets that are out of range to a valid target.  ie, Gnomish Death Ray and Gnomish Net-O-Matic."},
 	{"HidePetBattle", "ON", "Hide in Pet Battles", "Check this auto hide the frame while in a pet battle."},
 	{"MenuOnRight", "OFF", "Menu On Right-Click", "Check this to prevent the menu from appearing until either worn trinket is right-clicked.\n\nNOTE: This setting CANNOT be changed while in combat."}
 }
@@ -107,14 +107,14 @@ function TrinketMenu.MoveMinimapButton()
 		xpos = math.max(- 82, math.min(xpos, 84))
 		ypos = math.max(- 86, math.min(ypos, 82))
 	else
-		local radius = IsRetail and 102 or 80
+		local radius = IsRetail and 102 or 78
 		xpos = radius * cos(TrinketMenuOptions.IconPos or 0)
 		ypos = radius * sin(TrinketMenuOptions.IconPos or 0)
 	end
 	if IsRetail then
 		TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 82 - xpos, ypos - 84)
 	else
-		TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 52 - xpos, ypos - 52)
+		TrinketMenu_IconFrame:SetPoint("TOPLEFT", "Minimap", "TOPLEFT", 54 - xpos, ypos - 56)
 	end
 	if TrinketMenuOptions.ShowIcon == "ON" then
 		TrinketMenu_IconFrame:Show()
@@ -139,9 +139,9 @@ function TrinketMenu.MinimapButton_OnClick(button)
 		TrinketMenu.ReflectLock()
 	elseif IsAltKeyDown() and TrinketMenu.QueueInit then
 		if button == "LeftButton" then
-			TrinketMenuQueue.Enabled[0] = not TrinketMenuQueue.Enabled[0] and 1 or nil
+			TrinketMenuQueue.Enabled[0] = not TrinketMenuQueue.Enabled[0] and true or nil
 		elseif button == "RightButton" then
-			TrinketMenuQueue.Enabled[1] = not TrinketMenuQueue.Enabled[1] and 1 or nil
+			TrinketMenuQueue.Enabled[1] = not TrinketMenuQueue.Enabled[1] and true or nil
 		end
 		TrinketMenu.ReflectQueueEnabled()
 		TrinketMenu.UpdateCombatQueue()
@@ -247,7 +247,11 @@ function TrinketMenu.CheckButton_OnClick(self)
 	if self == TrinketMenu_OptCooldownCount then
 		TrinketMenu.WriteWornCooldowns()
 		TrinketMenu.WriteMenuCooldowns()
-		TrinketMenu.StartTimer("CooldownUpdate")
+		if TrinketMenuOptions.CooldownCount == "ON" then
+			TrinketMenu.StartTimer("CooldownUpdate")
+		elseif not TrinketMenu_OptNotify:GetChecked() and not TrinketMenu_OptNotifyThirty:GetChecked() then
+			TrinketMenu.StopTimer("CooldownUpdate")
+		end
 	elseif self == TrinketMenu_OptCooldownCountBlizzard then
 		if TrinketMenu_Trinket0 and TrinketMenu_Trinket0.cooldown then
 			if TrinketMenuOptions.CooldownCountBlizzard == "ON" then
@@ -322,7 +326,7 @@ function TrinketMenu.CheckButton_OnClick(self)
 	elseif self == TrinketMenu_OptNotify or self == TrinketMenu_OptNotifyThirty then
 		if TrinketMenu_OptNotify:GetChecked() or TrinketMenu_OptNotifyThirty:GetChecked() then
 			TrinketMenu.StartTimer("CooldownUpdate")
-		elseif not TrinketMenu_OptNotify:GetChecked() and not TrinketMenu_OptNotifyThirty:GetChecked() then
+		elseif not TrinketMenu_OptCooldownCount:GetChecked() then
 			TrinketMenu.StopTimer("CooldownUpdate")
 		end
 	end

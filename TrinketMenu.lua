@@ -1,4 +1,4 @@
---[[ TrinketMenu 12.0.2 ]]--
+--[[ TrinketMenu 12.0.3 ]]--
 
 TrinketMenu = { }
 
@@ -41,7 +41,7 @@ function TrinketMenu.LoadDefaults()
 		Columns = 4,					-- if SetColumns "ON", number of columns before menu wraps
 		ShowHotKeys = "OFF",			-- whether hotkeys show on trinkets
 		StopOnSwap = "OFF",				-- whether to stop auto queue on all manual swaps
-		RedRange = "OFF",				-- whether to monitor and red out out of range trinkets
+		--RedRange = "OFF",				-- whether to monitor and red out out of range trinkets
 		HidePetBattle = "ON",			-- whether to hide the trinkets while in a pet battle
 		MenuOnRight = "OFF"				-- whether to open menu with right-click
 	}
@@ -324,7 +324,7 @@ end
 
 function TrinketMenu.Initialize()
 	local options = TrinketMenuOptions
-	-- Set TrinketMenu Skin
+	-- set skin
 	if (Masque and not TrinketMenu.MasqueGroup) then
 		local group = Masque:Group("TrinketMenu")
 		TrinketMenu.MasqueGroup = group
@@ -353,7 +353,7 @@ function TrinketMenu.Initialize()
 	TrinketMenuPerOptions.ItemsUsed = TrinketMenuPerOptions.ItemsUsed or { } -- 3.0
 	options.StopOnSwap = options.StopOnSwap or "OFF" -- 3.2
 	options.HideOnLoad = options.HideOnLoad or "OFF" -- 3.4
-	options.RedRange = options.RedRange or "OFF" -- 3.54
+	--options.RedRange = options.RedRange or "OFF" -- 3.54
 	options.HidePetBattle = options.HidePetBattle or "ON" -- 6.0.3
 	options.CooldownCountBlizzard = options.CooldownCountBlizzard or "ON" -- 11.1.6
 	options.CooldownCountOmniCC = options.CooldownCountOmniCC or "ON" -- 11.1.6
@@ -600,7 +600,7 @@ function TrinketMenu.UpdateWornTrinkets()
 end
 
 function TrinketMenu.SlashHandler(msg)
-	local _, _, which, profile = string.find(msg, "load (.+) (.+)")
+	local _, _, which, profile = string.find(msg, "load (%S+) (.+)")
 	if profile and TrinketMenu.SetQueue then
 		which = string.lower(which)
 		if which == "top" or which == "0" then
@@ -762,16 +762,19 @@ end
 function TrinketMenu.TimersFrame_OnUpdate(elapsed)
 	local timerPool
 	local toStop
-	for _, name in ipairs(TrinketMenu.Timers) do
-		timerPool = TrinketMenu.TimerPool[name]
-		timerPool.elapsed = timerPool.elapsed - elapsed
-		if timerPool.elapsed < 0 then
-			timerPool.func()
-			if timerPool.rep then
-				timerPool.elapsed = timerPool.delay
-			else
-				toStop = toStop or {}
-				toStop[#toStop + 1] = name
+	local snapshot = {unpack(TrinketMenu.Timers)}
+	for _, name in ipairs(snapshot) do
+		if TrinketMenu.IsTimerActive(name) then
+			timerPool = TrinketMenu.TimerPool[name]
+			timerPool.elapsed = timerPool.elapsed - elapsed
+			if timerPool.elapsed < 0 then
+				timerPool.func()
+				if timerPool.rep then
+					timerPool.elapsed = timerPool.delay
+				else
+					toStop = toStop or {}
+					toStop[#toStop + 1] = name
+				end
 			end
 		end
 	end
@@ -811,7 +814,7 @@ function TrinketMenu.MainTrinket_OnClick(self, button, down)
 			TrinketMenu.CombatQueue[self:GetID() - 13] = nil
 			TrinketMenuQueue.Enabled[which] = nil
 		else
-			TrinketMenuQueue.Enabled[which] = 1
+			TrinketMenuQueue.Enabled[which] = true
 		end
 		TrinketMenu.ReflectQueueEnabled()
 		-- toggle queue
@@ -974,7 +977,7 @@ function TrinketMenu.UseInventoryItem(slot)
 end
 
 function TrinketMenu.UseAction(slot)
-	if IsRetail and C_ActionBar.IsEquippedAction(slot) or IsEquippedAction(slot) then
+	if IsRetail and C_ActionBar.IsEquippedAction(slot) or not IsRetail and IsEquippedAction(slot) then
 		TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
 		TrinketMenu_TooltipScan:SetAction(slot)
 		local _, trinket0 = TrinketMenu.ItemInfo(13)
@@ -1130,7 +1133,11 @@ end
 function TrinketMenu.FindSpace(engineering)
 	local bagType
 	for i = 4, 0, -1 do
-		bagType = (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 19 + i) or "")))
+		if i == 0 then
+			bagType = TrinketMenu.BAG -- backpack is always a normal bag
+		else
+			bagType = (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 18 + i) or "")))
+		end
 		if (engineering and bagType == TrinketMenu.ENGINEERING_BAG) or (not engineering and bagType == TrinketMenu.BAG) then
 			for j = 1, TrinketMenu.GetContainerNumSlots(i) do
 				if not TrinketMenu.GetContainerItemLink(i, j) then
@@ -1160,38 +1167,39 @@ function TrinketMenu.EquipTrinketByName(name, slot)
 			queue[which] = name
 		end
 	elseif not CursorHasItem() and not SpellIsTargeting() then
-		local _, b, s = TrinketMenu.FindItem(name)
-		if b then
-			if not TrinketMenu.GetContainerItemInfo(b, s).isLocked and not IsInventoryItemLocked(slot) then
+		local _, itemBag, itemSlot = TrinketMenu.FindItem(name)
+		if itemBag and itemSlot then
+			local itemInfo = TrinketMenu.GetContainerItemInfo(itemBag, itemSlot)
+			if itemInfo and not itemInfo.isLocked and not IsInventoryItemLocked(slot) then
 				-- neither container item nor inventory item locked, perform swap
 				local directSwap = true -- assume a direct swap will happen
-				if (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 19 + b) or ""))) == TrinketMenu.ENGINEERING_BAG then
+				if itemBag > 0 and (select(7, C_Item.GetItemInfo(GetInventoryItemLink("player", 18 + itemBag) or ""))) == TrinketMenu.ENGINEERING_BAG then
 					-- incoming trinket is in an engineering bag
 					if not TrinketMenu.IsEngineered(slot) then
 						-- outgoing trinket can't go inside it
-						local freeBag,freeSlot = TrinketMenu.FindSpace()
+						local freeBag, freeSlot = TrinketMenu.FindSpace()
 						if freeBag then
 							PickupInventoryItem(slot)
 							TrinketMenu.PickupContainerItem(freeBag, freeSlot)
-							TrinketMenu.PickupContainerItem(b, s)
+							TrinketMenu.PickupContainerItem(itemBag, itemSlot)
 							EquipCursorItem(slot)
 							directSwap = false
 						end
 					end
-				elseif TrinketMenu.IsEngineered(slot) and not TrinketMenu.IsEngineered(b, s) then
+				elseif TrinketMenu.IsEngineered(slot) and not TrinketMenu.IsEngineered(itemBag, itemSlot) then
 					-- outgoing trinket is engineered, incoming trinket is not
-					local freeBag, freeSlot = TrinketMenu.FindSpace(1)
+					local freeBag, freeSlot = TrinketMenu.FindSpace(true)
 					if freeBag then
 						-- move outgoing trinket to engineering bag, equip incoming trinket
 						PickupInventoryItem(slot)
 						TrinketMenu.PickupContainerItem(freeBag, freeSlot)
-						TrinketMenu.PickupContainerItem(b, s)
+						TrinketMenu.PickupContainerItem(itemBag, itemSlot)
 						EquipCursorItem(slot)
 						directSwap = false
 					end
 				end
 				if directSwap then
-					TrinketMenu.PickupContainerItem(b, s)
+					TrinketMenu.PickupContainerItem(itemBag, itemSlot)
 					PickupInventoryItem(slot)
 				end
 				_G["TrinketMenu_Trinket"..(slot - 13).."Icon"]:SetDesaturated(true)
@@ -1210,9 +1218,12 @@ function TrinketMenu.UpdateCombatQueue()
 		icon:Hide()
 		if trinket then
 			_, bag, slot = TrinketMenu.FindItem(trinket)
-			if bag then
-				icon:SetTexture(TrinketMenu.GetContainerItemInfo(bag, slot).iconFileID)
-				icon:Show()
+			if bag and slot then
+				local info = TrinketMenu.GetContainerItemInfo(bag, slot)
+				if info then
+					icon:SetTexture(info.iconFileID)
+					icon:Show()
+				end
 			end
 		elseif TrinketMenu.QueueInit and TrinketMenuQueue and TrinketMenuQueue.Enabled[which] then
 			icon:SetTexture("Interface\\AddOns\\TrinketMenu\\Textures\\TrinketMenu-Gear")
@@ -1231,8 +1242,8 @@ function TrinketMenu.Notify(msg)
 		SCT_Display(msg, {r = .2, g = .7, b = .9})
 	elseif Parrot then -- send via Parrot if it exists
 		Parrot:ShowMessage(msg, "Notification", true, 255, 0, 0, nil, nil, nil, nil)
-	elseif xCT then -- send via xCT if it exists
-		ct.frames[3]:AddMessage(msg, 255, 0, 0)
+	elseif xCT and xCT3 then -- send via xCT if it exists
+		xCT3:AddMessage(msg, 255, 0, 0)
 	elseif xCT_Plus then -- send via xCT+ if it exists
 		xCT_Plus:AddMessage("general", msg, {1, 0, 0})
 	elseif SHOW_COMBAT_TEXT == "1" and CombatText_AddMessage then -- or default UI's SCT
@@ -1328,7 +1339,7 @@ function TrinketMenu.WriteCooldown(where, start, duration)
 	local cooldown = duration - (GetTime() - start)
 	if start == 0 or TrinketMenuOptions.CooldownCount == "OFF" then
 		where:SetText("")
-	elseif cooldown < 3 and not where:GetText() then
+	elseif cooldown < 3 and where:GetText() == "" then
 		-- this is a global cooldown. don't display it. not accurate but at least not annoying
 	else
 		where:SetText((cooldown < 60 and math.floor(cooldown + .5).." s") or (cooldown < 3600 and math.ceil(cooldown / 60).." m") or math.ceil(cooldown / 3600).." h")
