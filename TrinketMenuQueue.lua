@@ -299,6 +299,7 @@ end
 function TrinketMenu.TabCheck_OnClick(self)
 	TrinketMenuQueue.Enabled[3 - self:GetID()] = self:GetChecked()
 	TrinketMenu.UpdateCombatQueue()
+	TrinketMenu.PeriodicQueueCheck()
 end
 
 --[[ Auto queue processing ]]
@@ -473,6 +474,7 @@ function TrinketMenu.SetQueue(which, ...)
 	end
 	TrinketMenu.ReflectQueueEnabled()
 	TrinketMenu.UpdateCombatQueue()
+	TrinketMenu.PeriodicQueueCheck()
 end
 
 -- returns 1 or nil if queue is enabled, and a table containing an ordered list of the trinkets

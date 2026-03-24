@@ -1,4 +1,4 @@
---[[ TrinketMenu 12.0.4 ]]--
+--[[ TrinketMenu 12.0.5 ]]--
 
 TrinketMenu = { }
 
@@ -829,6 +829,9 @@ function TrinketMenu.MenuTrinket_OnClick(self, button, down)
 		ChatFrame1EditBox:Insert(TrinketMenu.GetContainerItemLink(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot))
 	elseif IsAltKeyDown() then
 		local _, _, itemID = string.find(TrinketMenu.GetContainerItemLink(TrinketMenu.BaggedTrinkets[self:GetID()].bag, TrinketMenu.BaggedTrinkets[self:GetID()].slot) or "", "item:(%d+)")
+		if not itemID then
+			return
+		end
 		if TrinketMenuPerOptions.Hidden[itemID] then
 			TrinketMenuPerOptions.Hidden[itemID] = nil
 		else
@@ -982,9 +985,10 @@ function TrinketMenu.UseAction(slot)
 		TrinketMenu_TooltipScan:SetAction(slot)
 		local _, trinket0 = TrinketMenu.ItemInfo(13)
 		local _, trinket1 = TrinketMenu.ItemInfo(14)
-		if _G["TrinketMenu_TooltipScanTextLeft1"]:GetText() == trinket0 then
+		local tooltipLine = _G["TrinketMenu_TooltipScanTextLeft1"]
+		if tooltipLine and tooltipLine:GetText() == trinket0 then
 			TrinketMenu.ReflectTrinketUse(13)
-		elseif _G["TrinketMenu_TooltipScanTextLeft1"]:GetText() == trinket1 then
+		elseif tooltipLine and tooltipLine:GetText() == trinket1 then
 			TrinketMenu.ReflectTrinketUse(14)
 		end
 	end
@@ -1107,8 +1111,12 @@ function TrinketMenu.ShrinkTooltip(owner)
 		end
 		TrinketMenu.AnchorTooltip(owner)
 		GameTooltip:AddLine(name, r, g, b)
-		GameTooltip:AddLine(charge, 1, 1, 1)
-		GameTooltip:AddLine(cooldown, 1, 1, 1)
+		if charge then
+			GameTooltip:AddLine(charge, 1, 1, 1)
+		end
+		if cooldown then
+			GameTooltip:AddLine(cooldown, 1, 1, 1)
+		end
 	end
 end
 
