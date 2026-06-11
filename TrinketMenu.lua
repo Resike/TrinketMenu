@@ -439,9 +439,7 @@ function TrinketMenu.Initialize()
 			end
 		end
 	end
-	if TrinketMenu.PeriodicQueueCheck then
-		TrinketMenu.PeriodicQueueCheck()
-	end
+	TrinketMenu.QueueUpdate()
 	--TrinketMenu.StartTimer("QueueUpdate")
 	--TrinketMenu.ReflectRedRange()
 	if TrinketMenuPerOptions.Visible == "ON" and (GetInventoryItemLink("player", 13) or GetInventoryItemLink("player", 14)) then
@@ -818,7 +816,7 @@ function TrinketMenu.MainTrinket_OnClick(self, button, down)
 		TrinketMenu.ReflectQueueEnabled()
 		-- toggle queue
 		TrinketMenu.UpdateCombatQueue()
-		TrinketMenu.PeriodicQueueCheck()
+		TrinketMenu.QueueUpdate()
 	else
 		TrinketMenu.ReflectTrinketUse(self:GetID())
 	end
