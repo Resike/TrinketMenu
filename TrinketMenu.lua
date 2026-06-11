@@ -818,6 +818,7 @@ function TrinketMenu.MainTrinket_OnClick(self, button, down)
 		TrinketMenu.ReflectQueueEnabled()
 		-- toggle queue
 		TrinketMenu.UpdateCombatQueue()
+		TrinketMenu.PeriodicQueueCheck()
 	else
 		TrinketMenu.ReflectTrinketUse(self:GetID())
 	end
