@@ -2,7 +2,7 @@
 
 TrinketMenu = { }
 
-local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
+local _G, math, tonumber, string, type, pairs, ipairs, table, select, format = _G, math, tonumber, string, type, pairs, ipairs, table, select, string.format
 local Masque = LibStub("Masque", true)
 local L = TrinketMenu_L
 
@@ -1295,7 +1295,7 @@ function TrinketMenu.CooldownUpdate()
 				if TrinketMenuOptions.NotifyThirty == "ON" then
 					name = C_Item.GetItemInfo(i)
 					if name then
-						TrinketMenu.Notify(name.." ready soon!")
+						TrinketMenu.Notify(format(L.ReadySoon, name))
 					end
 				end
 				TrinketMenuPerOptions.ItemsUsed[i] = 5 -- tag for just 0 notify now
@@ -1303,7 +1303,7 @@ function TrinketMenu.CooldownUpdate()
 				if TrinketMenuOptions.Notify == "ON" then
 					name = C_Item.GetItemInfo(i)
 					if name then
-						TrinketMenu.Notify(name.." ready!")
+						TrinketMenu.Notify(format(L.Ready, name))
 					end
 				end
 			end

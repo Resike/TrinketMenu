@@ -123,5 +123,9 @@ L.ResetConfirm = "Are you sure you want to reset TrinketMenu to default state an
 L.ResetYes = "Yes"
 L.ResetNo = "No"
 
+-- Notifications
+L.ReadySoon = "%s ready soon!"
+L.Ready = "%s ready!"
+
 -- Stop queue sentinel
 L.StopQueueSentinel = "-- stop queue here --"
