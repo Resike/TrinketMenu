@@ -1,4 +1,4 @@
-## Interface: 120005, 50504, 20505, 11508
+## Interface: 120005, 50504, 20505, 11509
 ## Title: TrinketMenu 12.0.6
 ## Version: 12.0.6
 ## Author: Gello, Resike, Icewitts
