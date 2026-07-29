@@ -20,17 +20,6 @@
 Libs\LibStub\LibStub.lua
 
 TrinketMenuGlobals.lua
-Locale.lua
-Locales\enUS.lua
-Locales\deDE.lua
-Locales\esES.lua
-Locales\frFR.lua
-Locales\itIT.lua
-Locales\koKR.lua
-Locales\ptBR.lua
-Locales\ruRU.lua
-Locales\zhCN.lua
-Locales\zhTW.lua
 TrinketMenu.lua
 TrinketMenu.xml
 TrinketMenuOpt.lua
