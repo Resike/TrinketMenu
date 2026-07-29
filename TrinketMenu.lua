@@ -2,8 +2,9 @@
 
 TrinketMenu = { }
 
-local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
+local _G, math, tonumber, string, type, pairs, ipairs, table, select, format = _G, math, tonumber, string, type, pairs, ipairs, table, select, string.format
 local Masque = LibStub("Masque", true)
+local L = TrinketMenu_L
 
 local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -65,9 +66,10 @@ end
 --[[ Misc Variables ]]--
 
 TrinketMenu_Version = (C_AddOns and C_AddOns.GetAddOnMetadata or GetAddOnMetadata)("TrinketMenu", "Version")
-BINDING_HEADER_TRINKETMENU = "TrinketMenu"
-setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket0:LeftButton", "Use Top Trinket")
-setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket1:LeftButton", "Use Bottom Trinket")
+BINDING_HEADER_TRINKETMENU = L.BindingHeader
+setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket0:LeftButton", L.BindingTopTrinket)
+setglobal("BINDING_NAME_CLICK TrinketMenu_Trinket1:LeftButton", L.BindingBottomTrinket)
+setglobal("BINDING_NAME_Toggle TrinketMenu", L.BindingToggle)
 
 TrinketMenu.MaxTrinkets = 30 -- add more to TrinketMenu_MenuFrame if this changes
 TrinketMenu.BaggedTrinkets = { } -- indexed by number, 1-30 of trinkets in the menu
@@ -676,8 +678,8 @@ end
 
 function TrinketMenu.ResetSettings()
 	StaticPopupDialogs["TRINKETMENURESET"] = {
-		text = "Are you sure you want to reset TrinketMenu to default state and reload the UI?",
-		button1 = "Yes", button2 = "No", showAlert = 1, timeout = 0, whileDead = 1,
+		text = L.ResetConfirm,
+		button1 = L.ResetYes, button2 = L.ResetNo, showAlert = 1, timeout = 0, whileDead = 1,
 		OnAccept = function()
 			TrinketMenuOptions = nil
 			TrinketMenuPerOptions = nil
@@ -1293,7 +1295,7 @@ function TrinketMenu.CooldownUpdate()
 				if TrinketMenuOptions.NotifyThirty == "ON" then
 					name = C_Item.GetItemInfo(i)
 					if name then
-						TrinketMenu.Notify(name.." ready soon!")
+						TrinketMenu.Notify(format(L.ReadySoon, name))
 					end
 				end
 				TrinketMenuPerOptions.ItemsUsed[i] = 5 -- tag for just 0 notify now
@@ -1301,7 +1303,7 @@ function TrinketMenu.CooldownUpdate()
 				if TrinketMenuOptions.Notify == "ON" then
 					name = C_Item.GetItemInfo(i)
 					if name then
-						TrinketMenu.Notify(name.." ready!")
+						TrinketMenu.Notify(format(L.Ready, name))
 					end
 				end
 			end

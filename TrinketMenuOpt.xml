@@ -61,7 +61,7 @@
 				self:RegisterForDrag("LeftButton")
 			</OnLoad>
 			<OnEnter>
-				TrinketMenu.OnTooltip(self, "TrinketMenu", (TrinketMenuOptions.DisableToggle == "ON") and "Click: toggle options\nDrag: move icon" or "Left click: toggle trinkets\nRight click: toggle options\nDrag: move icon")
+				TrinketMenu.OnTooltip(self, "TrinketMenu", (TrinketMenuOptions.DisableToggle == "ON") and TrinketMenu_L.MinimapTooltipNoToggle or TrinketMenu_L.MinimapTooltipDefault)
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide()
@@ -83,7 +83,7 @@
 		<HighlightTexture alphaMode = "ADD" file = "Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
 	<Frame name = "TrinketMenu_OptFrame" parent = "UIParent" movable = "true" toplevel = "true" clampedToScreen = "true" hidden = "true" inherits = "TrinketMenuBackdropTemplate">
-		<Size x = "300" y = "356"/>
+		<Size x = "350" y = "356"/>
 		<Anchors>
 			<Anchor point = "CENTER"/>
 		</Anchors>
@@ -158,11 +158,11 @@
 					<TexCoords left = ".875" right = "1" top = ".125" bottom = ".25"/>
 				</PushedTexture>
 			</Button>
-			<Button name = "TrinketMenu_Tab1" inherits = "TrinketMenu_TabTemplate" text = "Options" id = "1">
+				<Button name = "TrinketMenu_Tab1" inherits = "TrinketMenu_TabTemplate" id = "1">
 				<Anchors>
 					<Anchor point = "TOPRIGHT">
 						<Offset>
-							<AbsDimension x = "-6" y = "-22"/>
+							<AbsDimension x = "-31" y = "-22"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -482,7 +482,7 @@
 						</KeyValues>
 						<Layers>
 							<Layer level = "ARTWORK">
-								<FontString name = "TrinketMenu_OptMainScaleSliderText" inherits = "GameFontHighlightSmall" text = "Main Scale: 1.0">
+								<FontString name = "TrinketMenu_OptMainScaleSliderText" inherits = "GameFontHighlightSmall">
 									<Anchors>
 										<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptSetColumnsText" relativePoint = "BOTTOMLEFT">
 											<Offset>
@@ -531,7 +531,7 @@
 						</KeyValues>
 						<Layers>
 							<Layer level = "ARTWORK">
-								<FontString name = "TrinketMenu_OptMenuScaleSliderText" inherits = "GameFontHighlightSmall" text = "Menu Scale: 1.0">
+								<FontString name = "TrinketMenu_OptMenuScaleSliderText" inherits = "GameFontHighlightSmall">
 									<Anchors>
 										<Anchor point = "TOPLEFT" relativeTo = "TrinketMenu_OptMainScaleSliderText" relativePoint = "BOTTOMLEFT">
 											<Offset>
