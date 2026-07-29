@@ -1,8 +1,18 @@
-## Interface: 120005, 50504, 20505, 11508
+## Interface: 120005, 50504, 20505, 11509
 ## Title: TrinketMenu 12.0.6
 ## Version: 12.0.6
 ## Author: Gello, Resike, Icewitts
 ## Notes: A lightweight addon that simplifies trinket management with an easy-to-use interface for quickly swapping and auto-rotating your trinkets.
+## Notes-deDE: Eine leichte Erweiterung, die die Schmuckverwaltung mit einer benutzerfreundlichen Oberfläche zum schnellen Tauschen und automatischen Rotieren vereinfacht.
+## Notes-esES: Un addon ligero que simplifica la gestión de abalorios con una interfaz fácil de usar para intercambiar y rotar automáticamente tus abalorios.
+## Notes-esMX: Un addon ligero que simplifica la gestión de abalorios con una interfaz fácil de usar para intercambiar y rotar automáticamente tus abalorios.
+## Notes-frFR: Un addon léger qui simplifie la gestion des bijoux avec une interface facile à utiliser pour échanger et faire tourner automatiquement vos bijoux.
+## Notes-itIT: Un addon leggero che semplifica la gestione dei Monili con un'interfaccia facile da usare per scambiare e ruotare automaticamente i tuoi Monili.
+## Notes-koKR: 장신구 관리를 간소화하는 가벼운 애드온으로, 직관적인 인터페이스를 통해 장신구를 빠르게 교체하고 자동 순환할 수 있습니다.
+## Notes-ptBR: Um addon leve que simplifica o gerenciamento de Berloques com uma interface fácil de usar para trocar e rotacionar automaticamente seus Berloques.
+## Notes-ruRU: Легкий аддон, упрощающий управление аксессуарами с помощью простого интерфейса для быстрой замены и автоматической ротации.
+## Notes-zhCN: 一款轻量级插件，通过易于使用的界面简化饰品管理，让您可以快速切换和自动轮换饰品。
+## Notes-zhTW: 一款輕量級插件，透過易於使用的介面簡化飾品管理，讓您可以快速切換和自動輪換飾品。
 ## IconTexture: Interface\AddOns\TrinketMenu\Textures\TrinketMenu-Icon-Up
 ## SavedVariables: TrinketMenuOptions
 ## SavedVariablesPerCharacter: TrinketMenuPerOptions, TrinketMenuQueue
