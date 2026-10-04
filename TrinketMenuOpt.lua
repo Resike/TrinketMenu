@@ -2,7 +2,8 @@
 
 local _G, math, string, table = _G, math, string, table
 
-local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+-- Forever (Camelot) runs Classic content on the modern client, so it takes the modern minimap metrics.
+local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 
 TrinketMenu.CheckOptInfo = {
 	{"ShowIcon", "ON", "Minimap Button", "Show or hide minimap button."},
