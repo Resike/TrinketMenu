@@ -7,7 +7,8 @@ local Masque = LibStub("Masque", true)
 
 local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+-- Forever (Camelot) runs Classic content on the modern client, so it takes the modern metrics and C_ namespaces.
+local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 
 -- ids required to support engineering bags
 TrinketMenu.BAG = 0 -- 13th return of GetItemInfo on a normal bag
