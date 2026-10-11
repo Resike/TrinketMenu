@@ -1,6 +1,8 @@
 --[[ TrinketMenu 12.0.5 ]]--
 
 TrinketMenu = { }
+local _,t = ...
+local compat = t.compat
 
 local _G, math, tonumber, string, type, pairs, ipairs, table, select = _G, math, tonumber, string, type, pairs, ipairs, table, select
 local Masque = LibStub("Masque", true)
@@ -8,6 +10,7 @@ local Masque = LibStub("Masque", true)
 local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local IsForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 
 -- ids required to support engineering bags
 TrinketMenu.BAG = 0 -- 13th return of GetItemInfo on a normal bag
@@ -322,6 +325,7 @@ function TrinketMenu.BuildMenu()
 end
 
 function TrinketMenu.Initialize()
+	if TrinketMenu._init then return end
 	local options = TrinketMenuOptions
 	-- set skin
 	if (Masque and not TrinketMenu.MasqueGroup) then
@@ -453,7 +457,7 @@ function TrinketMenu.Initialize()
 	for i = 1, TrinketMenu.MaxTrinkets do
 		_G["TrinketMenu_Menu"..i]:SetFrameLevel(2)
 	end
-
+	TrinketMenu._init = true
 end
 
 function TrinketMenu.ReflectMenuOnRight()
@@ -517,7 +521,9 @@ function TrinketMenu.OnLoad(self)
 	SlashCmdList["TrinketMenuCOMMAND"] = TrinketMenu.SlashHandler
 	SLASH_TrinketMenuCOMMAND1 = "/trinketmenu"
 	SLASH_TrinketMenuCOMMAND2 = "/trinket"
+	self:RegisterEvent("ADDON_LOADED")
 	self:RegisterEvent("PLAYER_LOGIN")
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function TrinketMenu.OnEvent(self, event, ...)
@@ -563,9 +569,14 @@ function TrinketMenu.OnEvent(self, event, ...)
 		TrinketMenu.KeyBindingsChanged()
 	elseif event == "PLAYER_REGEN_DISABLED" then
 		TrinketMenu_OptMenuOnRight:Disable()
-	elseif event == "PLAYER_LOGIN" then
-		TrinketMenu.LoadDefaults()
+	elseif event == "ADDON_LOADED" then
+		local addonName = ...
+		if addonName == "TrinketMenu" then
+			TrinketMenu.LoadDefaults()
+		end
+	elseif event == "PLAYER_ENTERING_WORLD" then
 		TrinketMenu.Initialize()
+	elseif event == "PLAYER_LOGIN" then
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
 		self:RegisterEvent("PLAYER_REGEN_DISABLED")
 		self:RegisterEvent("PLAYER_UNGHOST")
@@ -574,7 +585,7 @@ function TrinketMenu.OnEvent(self, event, ...)
 		self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 		self:RegisterEvent("UPDATE_BINDINGS")
 		self:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-		if not IsClassic then
+		if not (IsClassic or IsForever) then
 			self:RegisterEvent("PET_BATTLE_OPENING_START")
 			self:RegisterEvent("PET_BATTLE_CLOSE")
 		end
@@ -932,7 +943,7 @@ function TrinketMenu.DockingMenu()
 end
 
 function TrinketMenu.MenuMouseover()
-	if (not MouseIsOver(TrinketMenu_MainFrame)) and (not MouseIsOver(TrinketMenu_MenuFrame)) and not IsShiftKeyDown() and (TrinketMenuOptions.KeepOpen == "OFF") then
+	if (not compat.MouseIsOver(TrinketMenu_MainFrame)) and (not compat.MouseIsOver(TrinketMenu_MenuFrame)) and not IsShiftKeyDown() and (TrinketMenuOptions.KeepOpen == "OFF") then
 		TrinketMenu.StopTimer("MenuMouseover")
 		TrinketMenu_MenuFrame:Hide()
 	end
@@ -979,7 +990,7 @@ function TrinketMenu.UseInventoryItem(slot)
 end
 
 function TrinketMenu.UseAction(slot)
-	if IsRetail and C_ActionBar.IsEquippedAction(slot) or not IsRetail and IsEquippedAction(slot) then
+	if (IsRetail or IsForever) and C_ActionBar.IsEquippedAction(slot) or not IsRetail and IsEquippedAction(slot) then
 		TrinketMenu_TooltipScan:SetOwner(WorldFrame, "ANCHOR_NONE")
 		TrinketMenu_TooltipScan:SetAction(slot)
 		local _, trinket0 = TrinketMenu.ItemInfo(13)

@@ -321,7 +321,7 @@
 				</DisabledTexture>
 			</Button>
 
-			<EditBox name = "TrinketMenu_SortDelay" numeric = "true" historyLines = "0" enableMouse = "true" autoFocus = "false" letters = "3" virtual = "true">
+			<EditBox name = "TrinketMenu_SortDelay" numeric = "true" historyLines = "0" enableMouse = "true" autoFocus = "false" letters = "3">
 				<Size>
 					<AbsDimension x = "28" y = "20"/>
 				</Size>
