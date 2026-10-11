@@ -3,6 +3,7 @@
 local _G, math, string, table = _G, math, string, table
 
 local IsRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local IsForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 
 TrinketMenu.CheckOptInfo = {
 	{"ShowIcon", "ON", "Minimap Button", "Show or hide minimap button."},

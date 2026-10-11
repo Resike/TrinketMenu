@@ -164,7 +164,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+						if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CAMELOT then
 							self:SetPoint("TOPLEFT", 4, -4)
 						else
 							self:SetPoint("TOPLEFT", 8, -8)
@@ -192,7 +192,7 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad>
-						if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+						if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE or WOW_PROJECT_ID == WOW_PROJECT_CAMELOT then
 							self:SetPoint("BOTTOMRIGHT", -3, 3)
 						else
 							self:SetPoint("BOTTOMRIGHT", -8, 8)
