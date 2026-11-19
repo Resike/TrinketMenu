@@ -2,6 +2,8 @@
 
 local _G, type, string, tonumber, table, pairs, select = _G, type, string, tonumber, table, pairs, select
 
+local L = TrinketMenu_L
+
 local IsClassic = WOW_PROJECT_ID >= WOW_PROJECT_CLASSIC
 local IsVanillaClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 
@@ -22,11 +24,20 @@ function TrinketMenu.QueueInit()
 	TrinketMenu_SubQueueFrame:SetBackdropBorderColor(.3, .3, .3,1)
 	TrinketMenu_ProfilesFrame:SetBackdropBorderColor(.3, .3, .3, 1)
 	TrinketMenu_ProfilesListFrame:SetBackdropBorderColor(.3, .3, .3, 1)
-	TrinketMenu_SortPriorityText:SetText("Priority")
+	TrinketMenu_SortPriorityText:SetText(L.Priority)
 	TrinketMenu_SortPriorityText:SetTextColor(.95, .95, .95)
-	TrinketMenu_SortKeepEquippedText:SetText("Pause Queue")
+	TrinketMenu_SortKeepEquippedText:SetText(L.PauseQueue)
 	TrinketMenu_SortKeepEquippedText:SetTextColor(.95, .95, .95)
 	TrinketMenu_SortListFrame:SetBackdropBorderColor(.3, .3, .3, 1)
+	TrinketMenu_Tab2:SetText(L.TabBottom)
+	TrinketMenu_Tab3:SetText(L.TabTop)
+	TrinketMenu_ProfilesDelete:SetText(L.Delete)
+	TrinketMenu_ProfilesLoad:SetText(L.Load)
+	TrinketMenu_ProfilesSave:SetText(L.Save)
+	TrinketMenu_ProfilesCancel:SetText(L.Cancel)
+	_G["TrinketMenu_SortDelayDelayLabel"]:SetText(L.Delay)
+	_G["TrinketMenu_SortDelaySec"]:SetText(L.Sec)
+	_G["TrinketMenu_ProfileNameProfileLabel"]:SetText(L.Profile)
 	TrinketMenu.ReflectQueueEnabled()
 	TrinketMenu.UpdateCombatQueue()
 	TrinketMenuQueue.Profiles = TrinketMenuQueue.Profiles or { }
@@ -61,7 +72,7 @@ end
 
 function TrinketMenu.GetNameByID(id)
 	if id == 0 then
-		return "-- stop queue here --", "Interface\\Buttons\\UI-GroupLoot-Pass-Up", 1
+		return L.StopQueueSentinel, "Interface\\Buttons\\UI-GroupLoot-Pass-Up", 1
 	else
 		local name, _, quality, _, _, _, _, _, _, texture = C_Item.GetItemInfo(id or "")
 		return name, texture, quality
@@ -173,7 +184,7 @@ function TrinketMenu.SortTooltip(self)
 		GameTooltip:SetHyperlink(itemLink)
 		GameTooltip:Show()
 	else
-		TrinketMenu.OnTooltip(self,"Stop Queue Here", "Move this to mark the lowest trinket to auto queue. Sometimes you may want a passive trinket with a click effect to be the end (Burst of Knowledge, Second Wind, etc).")
+		TrinketMenu.OnTooltip(self, L.StopQueueHere, L.StopQueueHere_TT)
 	end
 end
 
@@ -561,7 +572,7 @@ function TrinketMenu.ProfileScrollFrameUpdate()
 		end
 	end
 	if #list == 0 then
-		TrinketMenu_Profile1Name:SetText("No profiles saved yet.")
+		TrinketMenu_Profile1Name:SetText(L.NoProfiles)
 		TrinketMenu_Profile1:Show()
 		TrinketMenu_Profile1:UnlockHighlight()
 	end
